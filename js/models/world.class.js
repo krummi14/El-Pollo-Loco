@@ -21,12 +21,12 @@ class World {
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.translate(this.camera_x, 0);
+        //this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.clouds);
         this.addObjectsToMap(this.level.enemies);
         this.addToMap(this.character);
-        this.ctx.translate(-this.camera_x, 0);
+        //this.ctx.translate(-this.camera_x, 0);
 
         let self = this;
         requestAnimationFrame(function () {
@@ -41,13 +41,11 @@ class World {
     }
 
     addToMap(mo) {
-        if (mo.otherDirection) {
-            this.flipImage(mo);
-        }
-        mo.draw(this.ctx);
-        mo.drawFrame(this.ctx);
-        if (mo.otherDirection) {
-            this.flipImageBack(mo);
+        if (mo instanceof BackgroundObject) {
+            mo.draw(this.ctx, this.camera_x);
+        } else {
+            mo.draw(this.ctx, this.camera_x);
+            mo.drawFrame(this.ctx, this.camera_x);
         }
     }
 
@@ -55,21 +53,21 @@ class World {
         this.ctx.save();
         this.ctx.translate(mo.width, 0);
         this.ctx.scale(-1, 1);
-        mo.x = mo.x * -1;
+        //mo.x = mo.x * -1;
     }
 
     flipImageBack(mo) {
-        mo.x = mo.x * -1;
+        //mo.x = mo.x * -1;
         this.ctx.restore();
     }
 
     createBackground() {
         for (let i = -1; i < 4; i++) {
             this.level.backgroundObjects.push(
-                new BackgroundObject('img/5_background/layers/air.png', 720 * i),
-                new BackgroundObject(`img/5_background/layers/3_third_layer/${((i % 2) + 1) % 2 + 1}.png`, 720 * i),
-                new BackgroundObject(`img/5_background/layers/2_second_layer/${((i % 2) + 1) % 2 + 1}.png`, 720 * i),
-                new BackgroundObject(`img/5_background/layers/1_first_layer/${((i % 2) + 1) % 2 + 1}.png`, 720 * i)
+                new BackgroundObject('img/5_background/layers/air.png', 720 * i, 0.1),
+                new BackgroundObject(`img/5_background/layers/3_third_layer/${((i % 2) + 1) % 2 + 1}.png`, 720 * i, 0.3),
+                new BackgroundObject(`img/5_background/layers/2_second_layer/${((i % 2) + 1) % 2 + 1}.png`, 720 * i, 0.6),
+                new BackgroundObject(`img/5_background/layers/1_first_layer/${((i % 2) + 1) % 2 + 1}.png`, 720 * i, 0.9)
             );
         }
     }
