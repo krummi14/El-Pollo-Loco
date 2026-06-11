@@ -30,24 +30,16 @@ class MovableObject {
         this.img.src = path;
     }
 
-    draw(ctx, camera_x = 0) {
-        ctx.save();
-        if (this.otherDirection) {
-            ctx.translate(this.x + camera_x + this.width, this.y);
-            ctx.scale(-1, 1);
-            ctx.drawImage(this.img, 0, 0, this.width, this.height);
-        } else {
-            ctx.drawImage(this.img, this.x + camera_x, this.y, this.width, this.height);
-        }
-        ctx.restore();
+    draw(ctx) {
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }
 
-    drawFrame(ctx, camera_x = 0) {
+    drawFrame(ctx) {
         if (this instanceof Character || this instanceof Chicken) {
             ctx.beginPath();
             ctx.lineWidth = '2';
             ctx.strokeStyle = "orange";
-            ctx.rect(this.x + camera_x, this.y, this.width, this.height);
+            ctx.rect(this.x, this.y, this.width, this.height);
             ctx.stroke();
         }
     }
