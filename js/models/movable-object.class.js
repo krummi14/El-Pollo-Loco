@@ -1,11 +1,4 @@
-class MovableObject {
-    x = 120;
-    y = 280;
-    img;
-    height = 150;
-    width = 100;
-    imageCache = {};
-    currentImage = 0;
+class MovableObject extends DrawableObject {
     speed = 0.25;
     otherDirection = false;
     speedY = 0;
@@ -24,25 +17,10 @@ class MovableObject {
     }
 
     isAboveGround() {
-        return this.y < 130
-    }
-
-    loadImage(path) {
-        this.img = new Image() // this.img = document.getElementById('image') <img id="image" src="">
-        this.img.src = path;
-    }
-
-    draw(ctx) {
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-    }
-
-    drawFrame(ctx) {
-        if (this instanceof Character || this instanceof Chicken) {
-            ctx.beginPath();
-            ctx.lineWidth = '2';
-            ctx.strokeStyle = "orange";
-            ctx.rect(this.x, this.y, this.width, this.height);
-            ctx.stroke();
+        if (this instanceof ThrowableObject) { //ThrowableObjects should always fall
+            return true;
+        } else {
+            return this.y < 130
         }
     }
 
@@ -54,9 +32,8 @@ class MovableObject {
             this.y < mo.y + mo.height;
     }
 
-
     hit() {
-        this.energy -= 25;
+        this.energy -= 20;
         if (this.energy < 0) {
             this.energy = 0;
         } else {
@@ -74,16 +51,11 @@ class MovableObject {
         return timepassed < 1;
     }
 
-    /**
-     * 
-     * @param {Array} arr - ['img/image1.png', 'img/image2.png, ...] 
-     */
-    loadImages(arr) {
-        arr.forEach((path) => {
-            let img = new Image();
-            img.src = path;
-            this.imageCache[path] = img;
-        });
+    playAnimation(images) {
+        let i = this.currentImage % images.length; // let i = 0 % 6
+        let path = images[i];
+        this.img = this.imageCache[path];
+        this.currentImage++;
     }
 
     moveRight() {
@@ -92,13 +64,6 @@ class MovableObject {
 
     moveLeft() {
         this.x -= this.speed;
-    }
-
-    playAnimation(images) {
-        let i = this.currentImage % images.length; // let i = 0 % 6
-        let path = images[i];
-        this.img = this.imageCache[path];
-        this.currentImage++;
     }
 
     jump() {
