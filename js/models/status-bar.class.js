@@ -32,7 +32,7 @@ class Statusbar extends DrawableObject {
         this.width = 200;
         this.height = 70;
         this.loadImages(this.IMAGES);
-        this.setPercentage(100);
+        this.setVolumeOfStatusbar(type)
     }
 
     positionOfStatusbars(type) {
@@ -40,6 +40,7 @@ class Statusbar extends DrawableObject {
             this.IMAGES = this.IMAGES_BOTTLE;
             this.x = 20;
             this.y = 0;
+
         } else if (type == 'coin') {
             this.IMAGES = this.IMAGES_COIN;
             this.x = 20;
@@ -51,8 +52,18 @@ class Statusbar extends DrawableObject {
         }
     }
 
+    setVolumeOfStatusbar(type) {
+        if (type == 'bottle') {
+            this.setPercentage(0);
+        } else if (type == 'coin') {
+            this.setPercentage(0);
+        } else if (type == 'health') {
+            this.setPercentage(100);
+        }
+    }
+
     setPercentage(percentage) {
-        this.percentageHealth = percentage; // => 0 ... 5
+        this.percentage = percentage; // => 0 ... 5
         let imagepath = this.IMAGES[this.resolveImageIndex()];
         this.img = this.imageCache[imagepath];
     }

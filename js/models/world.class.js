@@ -9,6 +9,18 @@ class World {
     statusBarCoins = new Statusbar('coin');
     statusBarBottle = new Statusbar('bottle');
     throwableObjects = [];
+    collectibles = [
+        new Collectible('bottle'),
+        new Collectible('bottle'),
+        new Collectible('bottle'),
+        new Collectible('bottle'),
+        new Collectible('bottle'),
+        new Collectible('coin'),
+        new Collectible('coin'),
+        new Collectible('coin'),
+        new Collectible('coin'),
+        new Collectible('coin'),
+    ];
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -17,29 +29,41 @@ class World {
         this.createBackground();
         this.draw();
         this.setWorld();
-        this.checkCollisions();
         this.run();
     }
 
     setWorld() {
         this.character.world = this;
+        this.level.enemies.forEach(enemy => {
+            if (enemy instanceof Endboss) {
+                enemy.world = this;
+            }
+        });
     }
 
     run() {
         setInterval(() => {
             this.checkCollisions();
             this.ceckThrowObjects();
+            this.checkCrossingItem();
         }, 200);
     }
 
     ceckThrowObjects() {
-        if (this.keyboard.D) {
+        if (this.keyboard.D && this.character.bottles > 0) {
+            this.character.bottles--;
+            this.statusBarBottle.setPercentage(this.character.bottles * 20);
             let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
             this.throwableObjects.push(bottle);
         }
     }
 
     checkCollisions() {
+        this.betweenCharacterAndEnemies();
+        this.betweenEndbossAndBottle();
+    }
+
+    betweenCharacterAndEnemies() {
         this.level.enemies.forEach((enemy) => {
             if (this.character.isColliding(enemy)) {
                 this.character.hit();
@@ -48,14 +72,40 @@ class World {
         });
     }
 
+    betweenEndbossAndBottle() {
+        this.throwableObjects.forEach((bottle, bottleIndex) => {
+            this.level.enemies.forEach(enemy => {
+                if (enemy instanceof Endboss && bottle.isColliding(enemy)) {
+                    enemy.hit();
+                    this.throwableObjects.splice(bottleIndex, 1);
+                }
+            });
+        });
+    }
+
+    checkCrossingItem() {
+        this.collectibles.forEach((item, index) => {
+            if (this.character.isColliding(item)) {
+                if (item.type == 'coin') {
+                    this.character.coins++;
+                    this.statusBarCoins.setPercentage(this.character.coins * 20);
+                } else if (item.type == 'bottle') {
+                    this.character.bottles++;
+                    this.statusBarBottle.setPercentage(this.character.bottles * 20);
+                }
+                this.collectibles.splice(index, 1);
+            }
+        });
+    }
+
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.drawBackgrounds();
         this.ctx.translate(this.camera_x, 0);
-        //this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.clouds);
         this.addObjectsToMap(this.level.enemies)
         this.addObjectsToMap(this.throwableObjects);
+        this.addObjectsToMap(this.collectibles);
         this.addToMap(this.character);
         this.ctx.translate(-this.camera_x, 0);
         this.addToMap(this.statusBarHealth);

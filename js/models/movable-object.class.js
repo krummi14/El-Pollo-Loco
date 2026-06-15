@@ -6,6 +6,7 @@ class MovableObject extends DrawableObject {
     inAir = false;
     energy = 100;
     lastHit = 0;
+    endbossWasTriggered = false;
 
     applyGravity() {
         setInterval(() => {
@@ -24,12 +25,11 @@ class MovableObject extends DrawableObject {
         }
     }
 
-    // character.isColliding(chicken)
-    isColliding(mo) {
-        return this.x + this.width > mo.x &&
-            this.y + this.height > mo.y &&
-            this.x < mo.x &&
-            this.y < mo.y + mo.height;
+    isColliding(obj) {
+        return this.x + this.width > obj.x &&
+            this.y + this.height > obj.y &&
+            this.x < obj.x &&
+            this.y < obj.y + obj.height;
     }
 
     hit() {
@@ -49,6 +49,17 @@ class MovableObject extends DrawableObject {
         let timepassed = new Date().getTime() - this.lastHit; //Difference in ms
         timepassed = timepassed / 1000; // Difference in sec
         return timepassed < 1;
+    }
+
+    endbossWantsToFight() {
+        let cameraLeft = -this.world.camera_x;
+        let cameraRight = cameraLeft + this.world.canvas.width;
+        if (this.x < cameraRight && !this.endbossWasTriggered) {
+            setTimeout(() => {
+                this.endbossWasTriggered = true;
+            }, 2000);
+        }
+        return this.endbossWasTriggered == true;
     }
 
     playAnimation(images) {
