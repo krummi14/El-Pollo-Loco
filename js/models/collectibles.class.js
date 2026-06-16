@@ -1,5 +1,6 @@
 class Collectible extends DrawableObject {
-    IMAGE_BOTTLE = 'img/7_statusbars/3_icons/icon_salsa_bottle.png';
+    IMAGE_BOTTLE_ONE = 'img/6_salsa_bottle/1_salsa_bottle_on_ground.png';
+    IMAGE_BOTTLE_TWO = 'img/6_salsa_bottle/2_salsa_bottle_on_ground.png';
     IMAGE_COIN = 'img/8_coin/coin_1.png';
 
     constructor(type) {
@@ -13,8 +14,10 @@ class Collectible extends DrawableObject {
 
     setTypeOfCollectible(type) {
         this.type = type;
-        if (type == 'bottle') {
-            this.loadImage(this.IMAGE_BOTTLE);
+        if (type == 'bottleOne') {
+            this.loadImage(this.IMAGE_BOTTLE_ONE);
+        } else if (type == 'bottleTwo') {
+            this.loadImage(this.IMAGE_BOTTLE_TWO);
         } else if (type == 'coin') {
             this.loadImage(this.IMAGE_COIN);
         }

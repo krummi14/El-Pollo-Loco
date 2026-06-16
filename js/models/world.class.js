@@ -8,13 +8,14 @@ class World {
     statusBarHealth = new Statusbar('health');
     statusBarCoins = new Statusbar('coin');
     statusBarBottle = new Statusbar('bottle');
+    statusBarEndboss = new Statusbar('endboss');
     throwableObjects = [];
     collectibles = [
-        new Collectible('bottle'),
-        new Collectible('bottle'),
-        new Collectible('bottle'),
-        new Collectible('bottle'),
-        new Collectible('bottle'),
+        new Collectible('bottleOne'),
+        new Collectible('bottleTwo'),
+        new Collectible('bottleTwo'),
+        new Collectible('bottleOne'),
+        new Collectible('bottleTwo'),
         new Collectible('coin'),
         new Collectible('coin'),
         new Collectible('coin'),
@@ -27,16 +28,18 @@ class World {
         this.canvas = canvas;
         this.keyboard = keyboard;
         this.createBackground();
-        this.draw();
         this.setWorld();
+        this.draw();
         this.run();
     }
 
     setWorld() {
         this.character.world = this;
         this.level.enemies.forEach(enemy => {
+            enemy.world = this;
             if (enemy instanceof Endboss) {
                 enemy.world = this;
+                this.endboss = enemy;
             }
         });
     }
@@ -54,21 +57,40 @@ class World {
             this.character.bottles--;
             this.statusBarBottle.setPercentage(this.character.bottles * 20);
             let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
+            bottle.world = this;
             this.throwableObjects.push(bottle);
         }
     }
 
     checkCollisions() {
+        this.betweenJumpingCharacterAndChicken();
         this.betweenCharacterAndEnemies();
         this.betweenEndbossAndBottle();
+        this.betweenChckenAndBottle();
     }
 
     betweenCharacterAndEnemies() {
         this.level.enemies.forEach((enemy) => {
+            if (enemy instanceof Chicken && enemy.energy <= 0) {
+                return;
+            }
             if (this.character.isColliding(enemy)) {
                 this.character.hit();
                 this.statusBarHealth.setPercentage(this.character.energy);
             };
+        });
+    }
+
+    betweenJumpingCharacterAndChicken() {
+        this.level.enemies.forEach((enemy, index) => {
+            if (enemy instanceof Chicken) {
+                if (this.character.isColliding(enemy)) {
+                    if (this.character.isJumpKill(enemy)) {
+                        enemy.energy = 0;
+                        this.character.jump();
+                    }
+                }
+            }
         });
     }
 
@@ -77,7 +99,19 @@ class World {
             this.level.enemies.forEach(enemy => {
                 if (enemy instanceof Endboss && bottle.isColliding(enemy)) {
                     enemy.hit();
-                    this.throwableObjects.splice(bottleIndex, 1);
+                    this.statusBarEndboss.setPercentage(enemy.energy);
+                    bottle.splash();
+                }
+            });
+        });
+    }
+
+    betweenChckenAndBottle() {
+        this.throwableObjects.forEach((bottle, bottleIndex) => {
+            this.level.enemies.forEach(enemy => {
+                if (enemy instanceof Chicken && bottle.isColliding(enemy)) {
+                    enemy.energy = 0;
+                    bottle.splash();
                 }
             });
         });
@@ -89,7 +123,7 @@ class World {
                 if (item.type == 'coin') {
                     this.character.coins++;
                     this.statusBarCoins.setPercentage(this.character.coins * 20);
-                } else if (item.type == 'bottle') {
+                } else if (item.type == 'bottleOne' || item.type == 'bottleTwo') {
                     this.character.bottles++;
                     this.statusBarBottle.setPercentage(this.character.bottles * 20);
                 }
@@ -111,7 +145,9 @@ class World {
         this.addToMap(this.statusBarHealth);
         this.addToMap(this.statusBarCoins);
         this.addToMap(this.statusBarBottle);
-
+        if (this.endboss.isVisible()) {
+            this.addToMap(this.statusBarEndboss);
+        }
         let self = this;
         requestAnimationFrame(function () {
             self.draw();
@@ -139,23 +175,19 @@ class World {
             this.flipImage(mo);
         }
         mo.draw(this.ctx);
-        mo.drawFrame(this.ctx);
         if (mo.otherDirection) {
-            this.flipImageBack(mo);
+            this.flipImageBack();
         }
     }
 
     flipImage(mo) {
         this.ctx.save();
         this.ctx.translate(mo.x + mo.width / 2, 0);
-        //this.ctx.translate(mo.width, 0);
         this.ctx.scale(-1, 1);
         this.ctx.translate(-mo.x - mo.width / 2, 0);
-        //mo.x = mo.x * -1;
     }
 
-    flipImageBack(mo) {
-        //mo.x = mo.x * -1;
+    flipImageBack() {
         this.ctx.restore();
     }
 
