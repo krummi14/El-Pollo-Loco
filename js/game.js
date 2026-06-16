@@ -2,10 +2,27 @@ let canvas;
 let world;
 let currentLevel = 1;
 let keyboard = new Keyboard();
+let startScreen = document.getElementById('startScreen');
+let fullscreen = document.getElementById('fullscreen');
+let starScreen_sound = new Audio('audio/intromusic.mp3');
+
+function startGame() {
+    pushCloudsIntoLevel();
+    initLevel();
+    initGame();
+    hideStartScreen();
+}
 
 function initGame() {
     canvas = document.getElementById("canvas");
     changeLevel();
+}
+
+function hideStartScreen() {
+    let startScreen = document.getElementById('startScreen');
+    fullscreen.classList.remove('display_none');
+    startScreen.classList.add('display_none');
+    starScreen_sound.pause();
 }
 
 function changeLevel() {
@@ -15,7 +32,6 @@ function changeLevel() {
 }
 
 function toggleFullscreen() {
-    let fullscreen = document.getElementById('fullscreen');
     if (!document.fullscreenElement) {
         openFullscreen(fullscreen);
     } else {
@@ -42,6 +58,14 @@ function closeFullscreen() {
         document.msExitFullscreen();
     }
 }
+
+function startIntroMusicOnce() {
+    starScreen_sound.loop = true;
+    starScreen_sound.play();
+    window.removeEventListener("click", startIntroMusicOnce);
+}
+
+window.addEventListener("click", startIntroMusicOnce);
 
 window.addEventListener("keydown", (e) => {
     if (e.key == "ArrowLeft") keyboard.LEFT = true;

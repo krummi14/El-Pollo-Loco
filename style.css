@@ -1,8 +1,113 @@
+/*----- Body And Generally -----*/
+* {
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+}
+
+/*----- Canvas -----*/
+canvas {
+    background-color: #000;
+}
+
+/*----- Start Screen -----*/
+.start_screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    background: url('img/9_intro_outro_screens/start/startscreen_2.png') center/cover no-repeat;
+    padding: 40px;
+}
+
+.generally_btn {
+    font-family: 'Luckiest Guy', cursive;
+    font-size: 32px;
+    padding: 8px 24px;
+    border: none;
+    border-radius: 32px;
+    background: linear-gradient(180deg,
+            rgba(255, 204, 77, 0.5),
+            rgba(255, 179, 71, 0.5));
+    color: #372100;
+    text-shadow: 2px 2px 0 rgba(255, 243, 196, 0.5);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 6px 0 rgba(198, 139, 0, 0.5);
+}
+
+.generally_btn:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 10px 0 #c68b00;
+}
+
+.generally_btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 3px 0 #c68b00;
+}
+
+.leaf {
+    position: absolute;
+    top: 70px;
+    left: -100px;
+    width: 80px;
+    opacity: 0.8;
+    animation: leafWind 6s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes leafWind {
+    0% {
+        transform: translate(0vw, 0vh) rotate(0deg);
+    }
+
+    20% {
+        transform: translate(20vw, 10vh) rotate(45deg);
+    }
+
+    40% {
+        transform: translate(40vw, -5vh) rotate(90deg);
+    }
+
+    60% {
+        transform: translate(60vw, 15vh) rotate(180deg);
+    }
+
+    80% {
+        transform: translate(80vw, 0vh) rotate(270deg);
+    }
+
+    100% {
+        transform: translate(100vw, 20vh) rotate(360deg);
+    }
+}
+
+.startscreen_btns {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+}
+
+/*---- Full Screen ---- */
 .fullscreen {
     position: relative;
-    width: 720px;
-    height: 100%;
-    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.display_none {
+    display: none;
 }
 
 .canvas {

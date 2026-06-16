@@ -25,17 +25,28 @@
     <script src="levels/level1.js"></script>
     <script src="levels/level2.js"></script>
     <script src="levels/level3.js"></script>
-    <script src="js/game.js"></script>
 </head>
 
-<body onload="initGame()">
-    <div id="fullscreen" class="fullscreen">
+<body>
+    <div id="startScreen" class="start_screen">
+        <img src="img/animation/leaf.png" class="leaf" style="animation-delay: 0s">
+        <img src="img/animation/leaf2.png" class="leaf" style="animation-delay: 2s">
+        <img src="img/animation/leaf2.png" class="leaf" style="animation-delay: 5s">
+        <div class="startscreen_btns">
+            <button id="startBtn" class="generally_btn start_btn" onclick="startGame()">Start Game</button>
+            <button id="optnBtn" class="generally_btn optn_btn" onclick="openOption()">Options</button>
+            <button id="introBtn" class="generally_btn intro_btn" onclick="openGameIntro()">Game Story</button>
+        </div>
+    </div>
+
+    <div id="fullscreen" class="fullscreen display_none">
         <h1>El Pollo Loco</h1>
         <canvas id="canvas" class="canvas" width="720px" height="480px">
 
         </canvas>
         <button class="fullscreen_btn" onclick="toggleFullscreen()">⛶</button>
     </div>
+    <script src="js/game.js"></script>
 </body>
 
 </html>

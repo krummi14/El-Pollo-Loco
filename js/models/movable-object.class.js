@@ -9,6 +9,7 @@ class MovableObject extends DrawableObject {
     endbossWasTriggered = false;
     lastAction = 0;
     direction = 0;
+    hasPlayedSound = false;
 
     applyGravity() {
         setInterval(() => {
