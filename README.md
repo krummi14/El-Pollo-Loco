@@ -1,101 +1,101 @@
 <h1>🎮 El Pollo Loco – 2D Canvas Game</h1>
 
 <p>
-Dieses Projekt ist ein objektorientiertes 2D‑Game, das vollständig mit 
-<strong>JavaScript, HTML und CSS</strong> entwickelt wurde.  
-Die Hauptfigur <strong>Pepe</strong> kämpft sich durch eine Welt voller Hühner.  
-Sein Ziel: das große Endgegner‑Huhn besiegen – und das gelingt ihm nur, indem er 
-<strong>Flaschen wirft</strong>, ausweicht und geschickt navigiert.
+This project is an object‑oriented 2D game built entirely with
+<strong>JavaScript, HTML, and CSS</strong>.
+The main character <strong>Pepe</strong> fights his way through a world full of chickens.
+His goal: defeat the giant final boss chicken — and he can only succeed by
+<strong>throwing bottles</strong>, dodging attacks, and navigating skillfully.
 </p>
 
 <hr>
 
-<h2>🧩 Hauptkomponenten</h2>
+<h2>🧩 Main Components</h2>
 
 <h3>🎨 Canvas</h3>
 <p>
-Das <strong>HTML5‑Canvas</strong> dient als Leinwand für das gesamte Spielgeschehen.  
-Hier werden alle grafischen Elemente wie Pepe, Gegner, Hintergrund und Effekte dargestellt.
+The <strong>HTML5 Canvas</strong> serves as the drawing surface for the entire game.
+All graphical elements such as Pepe, enemies, backgrounds, and effects are rendered here.
 </p>
 
-<h3>⌨️ Keylistener</h3>
+<h3>⌨️ Key Listener</h3>
 <p>
-Das Spiel nutzt die nativen <code>keydown</code>‑ und <code>keyup</code>‑Events des Browsers.  
-Diese liefern Informationen über gedrückte Tasten, Modifier Keys und Wiederholungsstatus.  
-Die Eingaben werden in einem eigenen Keyboard‑Objekt gespeichert und von der Spielfigur abgefragt.
+The game uses the browser’s native <code>keydown</code> and <code>keyup</code> events.
+These provide information about pressed keys, modifier keys, and repeat states.
+The inputs are stored in a dedicated Keyboard object and queried by the character.
 </p>
 
 <h3>🖌️ Draw() – Rendering Loop</h3>
 <p>
-Die <code>draw()</code>-Methode ist der <strong>Rendering‑Loop</strong> des Spiels.  
-Sie:
+The <code>draw()</code> method is the game’s <strong>rendering loop</strong>.
+It:
 </p>
 <ul>
-  <li>löscht das Canvas</li>
-  <li>zeichnet alle Hintergrundobjekte</li>
-  <li>rendert Clouds, Gegner und Pepe</li>
-  <li>iteriert über alle <strong>MovableObjects</strong></li>
-  <li>wird über <code>requestAnimationFrame()</code> bis zu 60x pro Sekunde aufgerufen</li>
+<li>clears the canvas</li>
+<li>draws all background objects</li>
+<li>renders clouds, enemies, and Pepe</li>
+<li>iterates through all <strong>MovableObjects</strong></li>
+<li>is executed up to 60 times per second via <code>requestAnimationFrame()</code></li>
 </ul>
 
 <h3>🔄 Update() – Game Logic Loop</h3>
 <p>
-Die <code>update()</code>-Methode ist für die <strong>Spielmechanik</strong> zuständig.  
-Sie kümmert sich um:
+The <code>update()</code> method handles the <strong>game mechanics</strong>.
+It manages:
 </p>
 <ul>
-  <li>Positionsänderungen</li>
-  <li>Bewegungslogik</li>
-  <li>Kollisionserkennung</li>
-  <li>Interaktionen zwischen Pepe und den Hühnern</li>
-  <li>Wurfmechanik der Flaschen</li>
-  <li>Bewegung der Kamera</li>
+<li>position updates</li>
+<li>movement logic</li>
+<li>collision detection</li>
+<li>interactions between Pepe and the chickens</li>
+<li>bottle throwing mechanics</li>
+<li>camera movement</li>
 </ul>
 
 <hr>
 
-<h2>🐔 Spielinhalt</h2>
+<h2>🐔 Game Content</h2>
 
-<h3>🧍 Hauptfigur: Pepe</h3>
+<h3>🧍 Main Character: Pepe</h3>
 <p>
-Pepe ist der Held des Spiels. Er kann laufen, springen und Flaschen werfen, um sich gegen die Hühner zu verteidigen.
+Pepe is the hero of the game. He can run, jump, and throw bottles to defend himself against the chickens.
 </p>
 
-<h3>🐤 Gegner: Hühner</h3>
+<h3>🐤 Enemies: Chickens</h3>
 <p>
-Mehrere kleine Hühner bewegen sich durch die Welt und stellen eine Gefahr für Pepe dar.
+Several small chickens roam the world and pose a threat to Pepe.
 </p>
 
-<h3>🐓 Endgegner: Das große Huhn</h3>
+<h3>🐓 Final Boss: The Giant Chicken</h3>
 <p>
-Der finale Boss ist ein riesiges Huhn, das Pepe nur mit <strong>präzise geworfenen Flaschen</strong> besiegen kann.
+The final boss is a massive chicken that Pepe can only defeat with
+<strong>precisely thrown bottles</strong>.
 </p>
 
 <hr>
 
-<h2>🛠️ Technologien</h2>
+<h2>🛠️ Technologies</h2>
 <ul>
-  <li><strong>JavaScript</strong> – Game‑Engine, Logik, Rendering, Input</li>
-  <li><strong>HTML</strong> – Canvas‑Struktur</li>
-  <li><strong>CSS</strong> – Layout und Styling</li>
+<li><strong>JavaScript</strong> – game engine, logic, rendering, input</li>
+<li><strong>HTML</strong> – canvas structure</li>
+<li><strong>CSS</strong> – layout and styling</li>
 </ul>
 
 <hr>
 
 <h2>🎵📷 Assets</h2>
 <p>
-Das Spiel verwendet zusätzliches Material:
+The game uses additional assets:
 </p>
 <ul>
-  <li><strong>Bilder</strong> (Sprites, Hintergründe, Animationen)</li>
-  <li><strong>Audio</strong> (Soundeffekte, Musik)</li>
+<li><strong>Images</strong> (sprites, backgrounds, animations)</li>
+<li><strong>Audio</strong> (sound effects, music)</li>
 </ul>
 
 <hr>
 
-<h2>🚀 Ziel des Projekts</h2>
+<h2>🚀 Project Goal</h2>
 <p>
-Dieses Repository dient als Grundlage für ein modular aufgebautes 2D‑Canvas‑Spiel.  
-Es eignet sich ideal, um die Funktionsweise von Game‑Loops, Animationen, Input‑Handling und 
-Canvas‑Rendering zu verstehen und zu erweitern.
+This repository serves as a foundation for a modular 2D canvas game.
+It is ideal for understanding and extending concepts such as game loops, animations, input handling, and canvas rendering.
 </p>

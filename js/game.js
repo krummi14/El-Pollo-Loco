@@ -1,10 +1,17 @@
 let canvas;
 let world;
+let currentLevel = 1;
 let keyboard = new Keyboard();
 
 function initGame() {
     canvas = document.getElementById("canvas");
-    world = new World(canvas, keyboard);
+    changeLevel();
+}
+
+function changeLevel() {
+    if (currentLevel == 1) world = new World(canvas, keyboard, level1);
+    if (currentLevel == 2) world = new World(canvas, keyboard, level2);
+    if (currentLevel == 3) world = new World(canvas, keyboard, level3);
 }
 
 function toggleFullscreen() {

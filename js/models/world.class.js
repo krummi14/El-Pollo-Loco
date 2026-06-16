@@ -1,6 +1,5 @@
 class World {
     character = new Character();
-    level = level1;
     ctx;
     canvas;
     keyboard;
@@ -23,10 +22,11 @@ class World {
         new Collectible('coin'),
     ];
 
-    constructor(canvas, keyboard) {
+    constructor(canvas, keyboard, level) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
+        this.level = level;
         this.createBackground();
         this.setWorld();
         this.draw();
@@ -71,7 +71,7 @@ class World {
 
     betweenCharacterAndEnemies() {
         this.level.enemies.forEach((enemy) => {
-            if (enemy instanceof Chicken && enemy.energy <= 0) {
+            if (enemy instanceof Chicken || enemy instanceof Babychicken && enemy.energy <= 0) {
                 return;
             }
             if (this.character.isColliding(enemy)) {
@@ -83,7 +83,7 @@ class World {
 
     betweenJumpingCharacterAndChicken() {
         this.level.enemies.forEach((enemy, index) => {
-            if (enemy instanceof Chicken) {
+            if (enemy instanceof Chicken || enemy instanceof Babychicken) {
                 if (this.character.isColliding(enemy)) {
                     if (this.character.isJumpKill(enemy)) {
                         enemy.energy = 0;
@@ -109,7 +109,7 @@ class World {
     betweenChckenAndBottle() {
         this.throwableObjects.forEach((bottle, bottleIndex) => {
             this.level.enemies.forEach(enemy => {
-                if (enemy instanceof Chicken && bottle.isColliding(enemy)) {
+                if (enemy instanceof Chicken || enemy instanceof Babychicken && bottle.isColliding(enemy)) {
                     enemy.energy = 0;
                     bottle.splash();
                 }
@@ -145,7 +145,7 @@ class World {
         this.addToMap(this.statusBarHealth);
         this.addToMap(this.statusBarCoins);
         this.addToMap(this.statusBarBottle);
-        if (this.endboss.isVisible()) {
+        if (this.endboss && this.endboss.isVisible()) {
             this.addToMap(this.statusBarEndboss);
         }
         let self = this;
