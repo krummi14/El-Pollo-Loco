@@ -3,14 +3,68 @@ let world;
 let currentLevel = 1;
 let keyboard = new Keyboard();
 let startScreen = document.getElementById('startScreen');
-let fullscreen = document.getElementById('fullscreen');
+let fullScreen = document.getElementById('fullscreen');
+let optionScreen = document.getElementById('gameIntroduction');
+let cursor = document.getElementById('cursor');
+let cursorImg = document.getElementById('cursorImg');
+let storyScreen = document.getElementById('gameStory');
 let starScreen_sound = new Audio('audio/intromusic.mp3');
+let gameStory_sound = new Audio('audio/gameStory.mp3');
+
+const deadChicken = 'img/3_enemies_chicken/chicken_normal/2_dead/dead.png';
+const normalChicken = 'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png';
 
 function startGame() {
     pushCloudsIntoLevel();
     initLevel();
     initGame();
     hideStartScreen();
+}
+
+function openOption() {
+    startScreen.classList.add('display_none');
+    optionScreen.classList.add('addGameIntro');
+}
+
+function closeOption() {
+    startScreen.classList.remove('display_none');
+    optionScreen.classList.remove('addGameIntro');
+}
+
+function openStory() {
+    startScreen.classList.add('display_none');
+    storyScreen.classList.add('addGameStory');
+    gameStory_sound.currentTime = 0;
+    gameStory_sound.play(); 
+}
+
+function closeStory() {
+    startScreen.classList.remove('display_none');
+    storyScreen.classList.remove('addGameStory');
+    gameStory_sound.pause();
+    gameStory_sound.currentTime = 0;
+}
+
+function cursorControl() {
+    document.addEventListener('mousemove', e => {
+        cursor.style.left = e.clientX - cursor.offsetWidth / 2 + 'px';
+        cursor.style.top = e.clientY - cursor.offsetHeight / 2 + 'px';
+    });
+    document.addEventListener('mousedown', () => {
+        cursor.style.transform = 'scale(1.3)';
+    });
+    document.addEventListener('mouseup', () => {
+        cursor.style.transform = 'scale(1)';
+    });
+    document.querySelectorAll('.kill_btn').forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+            cursorImg.src = deadChicken;
+        });
+
+        btn.addEventListener('mouseleave', () => {
+            cursorImg.src = normalChicken;
+        });
+    });
 }
 
 function initGame() {
@@ -20,7 +74,7 @@ function initGame() {
 
 function hideStartScreen() {
     let startScreen = document.getElementById('startScreen');
-    fullscreen.classList.remove('display_none');
+    fullScreen.classList.remove('display_none');
     startScreen.classList.add('display_none');
     starScreen_sound.pause();
 }
@@ -33,7 +87,7 @@ function changeLevel() {
 
 function toggleFullscreen() {
     if (!document.fullscreenElement) {
-        openFullscreen(fullscreen);
+        openFullscreen(fullScreen);
     } else {
         closeFullscreen();
     }
@@ -65,7 +119,13 @@ function startIntroMusicOnce() {
     window.removeEventListener("click", startIntroMusicOnce);
 }
 
+function startGameStory() {
+    gameStory_sound.play();
+    window.removeEventListener("click", startGameStory);
+}
+
 window.addEventListener("click", startIntroMusicOnce);
+window.addEventListener("click", startGameStory);
 
 window.addEventListener("keydown", (e) => {
     if (e.key == "ArrowLeft") keyboard.LEFT = true;

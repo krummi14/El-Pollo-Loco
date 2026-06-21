@@ -27,15 +27,15 @@
     <script src="levels/level3.js"></script>
 </head>
 
-<body>
+<body onload="cursorControl()">
     <div id="startScreen" class="start_screen">
         <img src="img/animation/leaf.png" class="leaf" style="animation-delay: 0s">
         <img src="img/animation/leaf2.png" class="leaf" style="animation-delay: 2s">
         <img src="img/animation/leaf2.png" class="leaf" style="animation-delay: 5s">
         <div class="startscreen_btns">
-            <button id="startBtn" class="generally_btn start_btn" onclick="startGame()">Start Game</button>
-            <button id="optnBtn" class="generally_btn optn_btn" onclick="openOption()">Options</button>
-            <button id="introBtn" class="generally_btn intro_btn" onclick="openGameIntro()">Game Story</button>
+            <button id="startBtn" class="generally_btn start_btn kill_btn" onclick="startGame()">Start Game</button>
+            <button id="optnBtn" class="generally_btn optn_btn kill_btn" onclick="openOption()">Options</button>
+            <button id="introBtn" class="generally_btn intro_btn kill_btn" onclick="openStory()">Game Story</button>
         </div>
     </div>
 
@@ -45,6 +45,64 @@
 
         </canvas>
         <button class="fullscreen_btn" onclick="toggleFullscreen()">⛶</button>
+    </div>
+
+    <div id="gameIntroduction" class="gameIntroduction display_none">
+        <div class="intro_content">
+            <h2>Game Introduction</h2>
+            <p>Control your character Pepe</p>
+            <ul class="intro_list controls">
+                <li>
+                    <span class="col icon">➡️</span>
+                    <span class="col key">Right Arrow</span>
+                    <span class="col desc">Move right</span>
+                </li>
+                <li>
+                    <span class="col icon">⬅️</span>
+                    <span class="col key">Left Arrow</span>
+                    <span class="col desc">Move left</span>
+                </li>
+                <li>
+                    <span class="col icon">⏫</span>
+                    <span class="col key">Space</span>
+                    <span class="col desc">Jump</span>
+                </li>
+                <li>
+                    <span class="col icon">🧪</span>
+                    <span class="col key">D</span>
+                    <span class="col desc">Throw Bottles</span>
+                </li>
+                <li>
+                    <span class="col icon">🚪</span>
+                    <span class="col key">F</span>
+                    <span class="col desc">Enter next level</span>
+                </li>
+            </ul>
+            <button class="generally_btn intro_btn kill_btn" onclick="closeOption()">Back</button>
+        </div>
+    </div>
+
+    <div id="gameStory" class="gameStory display_none">
+        <div class="story_content">
+            <h2>Game Story</h2>
+            <p class="story_text">
+                Amigo… hör gut zu.<br><br>
+                Dies ist die Geschichte von <strong>Pepe</strong>, dem mutigsten Mann in ganz Mexiko.
+                In <strong>El Pollo Loco</strong> kämpft er sich durch eine Welt voller verrückter Hühner –
+                Hühner, die so loco sind, dass selbst der Tequila Angst bekommt.<br><br>
+                Zum Glück hat Pepe seine treuen <strong>Salsa-Flaschen</strong> bei sich.
+                Und glaub mir, mi amigo… diese verrückten Hühner hassen Salsa mehr als alles andere.<br><br>
+                <strong>Level 1:</strong> Babychickens<br>
+                <strong>Level 2:</strong> Babychickens und Chickens<br>
+                <strong>Level 3:</strong> Chickens und der Endboss <strong>Chicken#</strong><br><br>
+                Und jetzt, Amigo… beginnt Peps Reise.
+            </p>
+            <button class="generally_btn intro_btn kill_btn" onclick="closeStory()">Back</button>
+        </div>
+    </div>
+
+    <div id="cursor" class="cursor">
+        <img id="cursorImg" class="cursorImg" src="img/3_enemies_chicken/chicken_normal/1_walk/1_w.png">
     </div>
     <script src="js/game.js"></script>
 </body>
