@@ -12,7 +12,20 @@ function initLevel() {
             new Babychicken()
         ],
         clouds,
-        []);
+        [],
+        [
+            new Collectible('bottleOne'),
+            new Collectible('bottleTwo'),
+            new Collectible('bottleTwo'),
+            new Collectible('bottleOne'),
+            new Collectible('coin'),
+            new Collectible('coin'),
+            new Collectible('coin'),
+            new Collectible('coin'),
+            new Collectible('coin'),
+        ],
+        new LevelEnd()
+    );
 }
 
 function pushCloudsIntoLevel() {

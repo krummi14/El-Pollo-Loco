@@ -1,6 +1,6 @@
 let canvas;
 let world;
-let currentLevel = 1;
+let currentLevel = 2;
 let keyboard = new Keyboard();
 let startScreen = document.getElementById('startScreen');
 let fullScreen = document.getElementById('fullscreen');
@@ -15,8 +15,6 @@ const deadChicken = 'img/3_enemies_chicken/chicken_normal/2_dead/dead.png';
 const normalChicken = 'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png';
 
 function startGame() {
-    pushCloudsIntoLevel();
-    initLevel();
     initGame();
     hideStartScreen();
 }
@@ -35,7 +33,7 @@ function openStory() {
     startScreen.classList.add('display_none');
     storyScreen.classList.add('addGameStory');
     gameStory_sound.currentTime = 0;
-    gameStory_sound.play(); 
+    gameStory_sound.play();
 }
 
 function closeStory() {
@@ -80,9 +78,23 @@ function hideStartScreen() {
 }
 
 function changeLevel() {
-    if (currentLevel == 1) world = new World(canvas, keyboard, level1);
-    if (currentLevel == 2) world = new World(canvas, keyboard, level2);
-    if (currentLevel == 3) world = new World(canvas, keyboard, level3);
+    if (currentLevel == 1) {
+        pushCloudsIntoLevel();
+        initLevel();      // erzeugt level1 neu
+        world = new World(canvas, keyboard, level1);
+    }
+
+    if (currentLevel == 2) {
+        pushCloudsIntoLevel2();
+        initLevel2();     // erzeugt level2 neu
+        world = new World(canvas, keyboard, level2);
+    }
+
+    if (currentLevel == 3) {
+        pushCloudsIntoLevel3();
+        initLevel3();     // erzeugt level3 neu
+        world = new World(canvas, keyboard, level3);
+    }
 }
 
 function toggleFullscreen() {
@@ -106,9 +118,9 @@ function openFullscreen(elem) {
 function closeFullscreen() {
     if (document.exitFullscreen) {
         document.exitFullscreen();
-    } else if (document.webkitExitFullscreen) { /* Safari */
+    } else if (document.webkitExitFullscreen) {
         document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) { /* IE11 */
+    } else if (document.msExitFullscreen) {
         document.msExitFullscreen();
     }
 }
@@ -119,13 +131,7 @@ function startIntroMusicOnce() {
     window.removeEventListener("click", startIntroMusicOnce);
 }
 
-function startGameStory() {
-    gameStory_sound.play();
-    window.removeEventListener("click", startGameStory);
-}
-
 window.addEventListener("click", startIntroMusicOnce);
-window.addEventListener("click", startGameStory);
 
 window.addEventListener("keydown", (e) => {
     if (e.key == "ArrowLeft") keyboard.LEFT = true;
@@ -134,6 +140,7 @@ window.addEventListener("keydown", (e) => {
     if (e.key == "ArrowDown") keyboard.DOWN = true;
     if (e.key == " ") keyboard.SPACE = true;
     if (e.key == "d") keyboard.D = true;
+    if (e.key == "f") keyboard.F = true;
 });
 
 window.addEventListener("keyup", (e) => {
@@ -143,4 +150,5 @@ window.addEventListener("keyup", (e) => {
     if (e.key == "ArrowDown") keyboard.DOWN = false;
     if (e.key == " ") keyboard.SPACE = false;
     if (e.key == "d") keyboard.D = false;
+    if (e.key == "f") keyboard.F = false;
 });

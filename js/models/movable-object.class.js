@@ -10,6 +10,8 @@ class MovableObject extends DrawableObject {
     lastAction = 0;
     direction = 0;
     hasPlayedSound = false;
+    borderLeft = 60;
+    borderRight = 2200;
 
     applyGravity() {
         setInterval(() => {
@@ -72,6 +74,12 @@ class MovableObject extends DrawableObject {
             !this.isHurt();
     }
 
+    isNearLevelEnd() {
+        if (!this.world || !this.world.levelEnd) return false;
+        let distance = Math.abs(this.x - this.world.levelEnd.x);
+        return distance < 150;
+    }
+
     isSleeping() {
         let timePassed = new Date().getTime() - this.lastAction;
         timePassed = timePassed / 1000;
@@ -125,5 +133,21 @@ class MovableObject extends DrawableObject {
         if (!this.world) return false;
         return this.x + this.width > -this.world.camera_x &&
             this.x < -this.world.camera_x + this.world.canvas.width;
+    }
+
+    moveWithBorders() {
+        if (this.x >= this.borderRight) {
+            this.direction = 'left';
+        }
+        if (this.x <= this.borderLeft) {
+            this.direction = 'right';
+        }
+        if (this.direction === 'left') {
+            this.moveLeft();
+            this.otherDirection = false;
+        } else {
+            this.moveRight();
+            this.otherDirection = true;
+        }
     }
 }

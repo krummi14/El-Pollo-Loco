@@ -11,6 +11,7 @@ class Babychicken extends MovableObject {
         'img/3_enemies_chicken/chicken_small/2_dead/dead.png'
     ];
     babyChicken_sound = new Audio('audio/babychicken.wav');
+    direction = 'left';
 
     constructor() {
         super().loadImage('img/3_enemies_chicken/chicken_small/1_walk/1_w.png');
@@ -36,13 +37,7 @@ class Babychicken extends MovableObject {
                 this.babyChicken_sound.pause();
                 return;
             }
-            if (this.direction == 'left') {
-                this.moveLeft();
-                this.otherDirection = false;
-            } else {
-                this.moveRight();
-                this.otherDirection = true;
-            }
+            this.moveWithBorders();
         }, 1000 / 60);
         setInterval(() => {
             if (this.isDead()) {
