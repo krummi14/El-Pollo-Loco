@@ -10,6 +10,7 @@ class World {
     statusBarEndboss = new Statusbar('endboss');
     throwableObjects = [];
     hintMessage = "";
+    gameState = 'running';
 
     constructor(canvas, keyboard, level) {
         this.ctx = canvas.getContext('2d');
@@ -17,8 +18,7 @@ class World {
         this.keyboard = keyboard;
         this.level = level;
         this.collectibles = this.level.collectibles;
-        this.levelEnd = this.level.levelEnd;
-        this.createBackground();
+        this.levelEnd = this.level.levelEnd || null;
         this.setWorld();
         this.resetWorldState();
         this.draw();
@@ -26,6 +26,8 @@ class World {
     }
 
     setWorld() {
+        console.log('SET WORLD FOR LEVEL:', currentLevel, this.level);
+        this.endboss = null;
         this.character.world = this;
         this.level.enemies.forEach(enemy => {
             enemy.world = this;
@@ -37,14 +39,23 @@ class World {
     }
 
     run() {
-        setInterval(() => {
+        this.intervalId = setInterval(() => {
             this.checkCollisions();
+            this.checkWonAgainstEndboss();
             this.ceckThrowObjects();
             this.checkCrossingItem();
             this.checkLevelEnd();
             this.checkGateOpenByPlayer();
             this.checkIfCharacterReachedExit();
         }, 200);
+    }
+
+    checkWonAgainstEndboss() {
+        if (this.endboss && this.endboss.energy <= 0 && this.gameState == 'running') {
+            this.gameState = 'won';
+            this.showWinScreen();
+            return;
+        }
     }
 
     ceckThrowObjects() {
@@ -128,8 +139,9 @@ class World {
     }
 
     checkLevelEnd() {
+        if (!this.levelEnd) return;
         if (!this.character.isNearLevelEnd()) {
-            this.hintMessage = ""; // Hinweis ausblenden, wenn zu weit weg
+            this.hintMessage = "";
             return;
         }
         if (this.character.coins == this.level.totalCoins) {
@@ -141,12 +153,14 @@ class World {
     }
 
     checkIfCharacterReachedExit() {
+        if (!this.levelEnd) return;
         if (this.levelEnd.isFullyOpen && this.character.x > this.levelEnd.x - 50) {
             this.nextLevel();
         }
     }
 
     checkGateOpenByPlayer() {
+        if (!this.levelEnd) return;
         if (
             this.keyboard.F &&
             this.levelEnd.canBeOpened &&
@@ -159,6 +173,7 @@ class World {
     }
 
     resetWorldState() {
+        this.collectibles = this.level.collectibles.map(c => new Collectible(c.type));
         this.camera_x = 0;
         this.character.x = 50;
         this.character.y = 100;
@@ -175,6 +190,7 @@ class World {
     }
 
     draw() {
+        if (this.gameState == 'won') return;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.drawBackgrounds();
         this.ctx.translate(this.camera_x, 0);
@@ -183,7 +199,9 @@ class World {
         this.addObjectsToMap(this.throwableObjects);
         this.addObjectsToMap(this.collectibles);
         this.addToMap(this.character);
-        this.addToMap(this.levelEnd);
+        if (this.levelEnd) {
+            this.addToMap(this.levelEnd);
+        }
         this.ctx.translate(-this.camera_x, 0);
         this.addToMap(this.statusBarHealth);
         this.addToMap(this.statusBarCoins);
@@ -212,13 +230,23 @@ class World {
     }
 
     drawBackgrounds() {
-        this.level.backgroundObjects.forEach(background => {
-            const offsetX = this.camera_x * background.parallaxFactor;
+        this.level.backgroundObjects.forEach(bg => {
+            const offsetX = this.camera_x * bg.parallaxFactor;
             this.ctx.save();
             this.ctx.translate(offsetX, 0);
-            this.addToMap(background);
+            this.addToMap(bg);
             this.ctx.restore();
         });
+    }
+
+    showWinScreen() {
+        clearInterval(this.intervalId);
+        let img = new Image();
+        img.src = 'img/You won, you lost/You won A.png';
+        img.onload = () => {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
+        };
     }
 
     addObjectsToMap(objects) {
@@ -228,6 +256,10 @@ class World {
     }
 
     addToMap(mo) {
+        if (!mo || typeof mo.draw !== 'function') {
+            console.warn('addToMap: invalid object', mo);
+            return;
+        }
         if (mo.otherDirection) {
             this.flipImage(mo);
         }
@@ -248,18 +280,9 @@ class World {
         this.ctx.restore();
     }
 
-    createBackground() {
-        for (let i = -1; i < 4; i++) {
-            this.level.backgroundObjects.push(
-                new BackgroundObject('img/5_background/layers/air.png', 720 * i, 0),
-                new BackgroundObject(`img/5_background/layers/3_third_layer/${((i % 2) + 1) % 2 + 1}.png`, 720 * i, 0.1),
-                new BackgroundObject(`img/5_background/layers/2_second_layer/${((i % 2) + 1) % 2 + 1}.png`, 720 * i, 0.2),
-                new BackgroundObject(`img/5_background/layers/1_first_layer/${((i % 2) + 1) % 2 + 1}.png`, 720 * i, 0.3)
-            );
-        }
-    }
-
     nextLevel() {
+        console.log('NEXT LEVEL FROM', currentLevel, 'TO', currentLevel + 1);
+        clearInterval(this.intervalId);   // ← ganz wichtig
         currentLevel++;
         changeLevel();
     }

@@ -1,31 +1,35 @@
 let level2;
-const clouds2 = [];
+
+let enemies2 = [
+    new Chicken(),
+    new Chicken(),
+    new Chicken(),
+    new Babychicken(),
+    new Babychicken(),
+    new Babychicken(),
+    new Babychicken()
+];
+
+let clouds2 = [];
+
+let collectibles2 = [
+    new Collectible('coin'),
+    new Collectible('coin'),
+    new Collectible('coin'),
+    new Collectible('coin'),
+    new Collectible('coin'),
+    new Collectible('bottleOne'),
+    new Collectible('bottleTwo'),
+    new Collectible('bottleOne'),
+    new Collectible('bottleOne'),
+    new Collectible('bottleTwo')
+];
 
 function initLevel2() {
     level2 = new Level(
-        [
-            new Chicken(),
-            new Chicken(),
-            new Chicken(),
-            new Babychicken(),
-            new Babychicken(),
-            new Babychicken(),
-            new Babychicken()
-        ],
+        enemies2,
         clouds2,
-        [],
-        [
-            new Collectible('coin'),
-            new Collectible('coin'),
-            new Collectible('coin'),
-            new Collectible('coin'),
-            new Collectible('coin'),
-            new Collectible('bottleOne'),
-            new Collectible('bottleTwo'),
-            new Collectible('bottleOne'),
-            new Collectible('bottleOne'),
-            new Collectible('bottleTwo')
-        ],
+        collectibles2,
         new LevelEnd()
     );
 }

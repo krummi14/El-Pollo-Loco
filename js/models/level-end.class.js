@@ -11,7 +11,8 @@ class LevelEnd extends MovableObject {
     ];
 
     constructor() {
-        super().loadImage('img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png');
+        super();
+        this.loadImage('img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png');
         this.loadImages(this.IMAGES_OPENING);
         this.loadImages(this.IMAGES_OPEN);
         this.x = 2100;
@@ -21,7 +22,7 @@ class LevelEnd extends MovableObject {
         this.isOpen = false;
         this.isFullyOpen = false;
         this.canBeOpened = false;
-    }
+    }   
 
     open() {
         this.isOpen = true;

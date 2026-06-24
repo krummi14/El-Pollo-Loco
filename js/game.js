@@ -1,6 +1,6 @@
 let canvas;
 let world;
-let currentLevel = 2;
+let currentLevel = 3;
 let keyboard = new Keyboard();
 let startScreen = document.getElementById('startScreen');
 let fullScreen = document.getElementById('fullscreen');
@@ -78,21 +78,20 @@ function hideStartScreen() {
 }
 
 function changeLevel() {
+    console.log('CHANGE LEVEL TO', currentLevel);
     if (currentLevel == 1) {
         pushCloudsIntoLevel();
-        initLevel();      // erzeugt level1 neu
+        initLevel();
         world = new World(canvas, keyboard, level1);
     }
-
     if (currentLevel == 2) {
         pushCloudsIntoLevel2();
-        initLevel2();     // erzeugt level2 neu
+        initLevel2();
         world = new World(canvas, keyboard, level2);
     }
-
     if (currentLevel == 3) {
         pushCloudsIntoLevel3();
-        initLevel3();     // erzeugt level3 neu
+        initLevel3();
         world = new World(canvas, keyboard, level3);
     }
 }
