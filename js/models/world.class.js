@@ -26,7 +26,6 @@ class World {
     }
 
     setWorld() {
-        console.log('SET WORLD FOR LEVEL:', currentLevel, this.level);
         this.endboss = null;
         this.character.world = this;
         this.level.enemies.forEach(enemy => {
@@ -47,14 +46,15 @@ class World {
             this.checkLevelEnd();
             this.checkGateOpenByPlayer();
             this.checkIfCharacterReachedExit();
+            this.checkLost();
         }, 200);
     }
 
     checkWonAgainstEndboss() {
         if (this.endboss && this.endboss.energy <= 0 && this.gameState == 'running') {
             this.gameState = 'won';
-            this.showWinScreen();
-            return;
+            this.stopAllGameSounds();
+            showWinScreen();
         }
     }
 
@@ -172,10 +172,26 @@ class World {
         }
     }
 
+    checkWonAgainstEndboss() {
+        if (this.endboss && this.endboss.energy <= 0 && this.gameState == 'running') {
+            this.gameState = 'won';
+            this.stopAllGameSounds();
+            showWinScreen();
+        }
+    }
+
+    checkLost() {
+        if (this.character.energy <= 0 && this.endboss && this.endboss.energy > 0) {
+            this.gameState = 'lost';
+            this.stopAllGameSounds();
+            showLostScreen();
+        }
+    }
+
     resetWorldState() {
         this.collectibles = this.level.collectibles.map(c => new Collectible(c.type));
         this.camera_x = 0;
-        this.character.x = 50;
+        this.character.x = 120;
         this.character.y = 100;
         this.character.speedY = 0;
         this.character.energy = 100;
@@ -185,8 +201,13 @@ class World {
         if (this.endboss) {
             this.endboss.endbossWasTriggered = false;
             this.endboss.energy = 100;
-            this.endboss.x = 2000;
+            this.endboss.x = 2500;
         }
+    }
+
+    stopAllGameSounds() {
+        this.level.enemies.forEach(enemy => enemy.stopSound());
+        this.character.stopSound();
     }
 
     draw() {
@@ -239,16 +260,6 @@ class World {
         });
     }
 
-    showWinScreen() {
-        clearInterval(this.intervalId);
-        let img = new Image();
-        img.src = 'img/You won, you lost/You won A.png';
-        img.onload = () => {
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.ctx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
-        };
-    }
-
     addObjectsToMap(objects) {
         objects.forEach(o => {
             this.addToMap(o)
@@ -257,7 +268,6 @@ class World {
 
     addToMap(mo) {
         if (!mo || typeof mo.draw !== 'function') {
-            console.warn('addToMap: invalid object', mo);
             return;
         }
         if (mo.otherDirection) {
@@ -281,8 +291,7 @@ class World {
     }
 
     nextLevel() {
-        console.log('NEXT LEVEL FROM', currentLevel, 'TO', currentLevel + 1);
-        clearInterval(this.intervalId);   // ← ganz wichtig
+        clearInterval(this.intervalId);
         currentLevel++;
         changeLevel();
     }

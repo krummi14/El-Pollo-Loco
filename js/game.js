@@ -7,38 +7,42 @@ let fullScreen = document.getElementById('fullscreen');
 let optionScreen = document.getElementById('gameIntroduction');
 let cursor = document.getElementById('cursor');
 let cursorImg = document.getElementById('cursorImg');
+let winImg = document.getElementById('winImg');
+let lostImg = document.getElementById('lostImg');
 let storyScreen = document.getElementById('gameStory');
+let winLostScreen = document.getElementById('winLostScreen');
 let starScreen_sound = new Audio('audio/intromusic.mp3');
 let gameStory_sound = new Audio('audio/gameStory.mp3');
-
 const deadChicken = 'img/3_enemies_chicken/chicken_normal/2_dead/dead.png';
 const normalChicken = 'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png';
+
 
 function startGame() {
     initGame();
     hideStartScreen();
+    winLostScreen.classList.add('display_none');
 }
 
 function openOption() {
+    optionScreen.classList.remove('display_none');
     startScreen.classList.add('display_none');
-    optionScreen.classList.add('addGameIntro');
 }
 
 function closeOption() {
+    optionScreen.classList.add('display_none');
     startScreen.classList.remove('display_none');
-    optionScreen.classList.remove('addGameIntro');
 }
 
 function openStory() {
+    storyScreen.classList.remove('display_none');
     startScreen.classList.add('display_none');
-    storyScreen.classList.add('addGameStory');
     gameStory_sound.currentTime = 0;
     gameStory_sound.play();
 }
 
 function closeStory() {
+    storyScreen.classList.add('display_none');
     startScreen.classList.remove('display_none');
-    storyScreen.classList.remove('addGameStory');
     gameStory_sound.pause();
     gameStory_sound.currentTime = 0;
 }
@@ -71,14 +75,19 @@ function initGame() {
 }
 
 function hideStartScreen() {
-    let startScreen = document.getElementById('startScreen');
     fullScreen.classList.remove('display_none');
     startScreen.classList.add('display_none');
     starScreen_sound.pause();
 }
 
+function openStartScreen() {
+    startScreen.classList.remove('display_none');
+    winLostScreen.classList.add('display_none');
+    fullScreen.classList.add('display_none');
+    starScreen_sound.play();
+}
+
 function changeLevel() {
-    console.log('CHANGE LEVEL TO', currentLevel);
     if (currentLevel == 1) {
         pushCloudsIntoLevel();
         initLevel();
@@ -124,10 +133,24 @@ function closeFullscreen() {
     }
 }
 
-function startIntroMusicOnce() {
+function startIntroMusicOnce(e) {
+    if (e.target.id == "startBtn") return;
+    if (startScreen.classList.contains("display_none")) return;
     starScreen_sound.loop = true;
     starScreen_sound.play();
     window.removeEventListener("click", startIntroMusicOnce);
+}
+
+function showWinScreen() {
+    winLostScreen.classList.remove('display_none');
+    winImg.classList.remove('display_none');
+    lostImg.classList.add('display_none');
+}
+
+function showLostScreen() {
+    winLostScreen.classList.remove('display_none');
+    winImg.classList.add('display_none');
+    lostImg.classList.remove('display_none');
 }
 
 window.addEventListener("click", startIntroMusicOnce);

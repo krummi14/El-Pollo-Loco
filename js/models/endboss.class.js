@@ -37,8 +37,8 @@ class Endboss extends MovableObject {
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_DEAD);
         this.energy = 20;
-        this.x = 2500;
         this.speed = 0.15 + Math.random() * 0.5;
+        this.sound = this.endboss_sound;
         this.waitForWorldThenStart();
     }
 
@@ -53,6 +53,7 @@ class Endboss extends MovableObject {
 
     animateEndboss() {
         setInterval(() => {
+            if (this.world.gameState != 'running') return;
             if (this.isDead()) return;
             if (this.endbossWantsToFight()) {
                 this.endboss_sound.play();
@@ -61,6 +62,7 @@ class Endboss extends MovableObject {
         }, 1000 / 60);
 
         setInterval(() => {
+            if (this.world.gameState != 'running') return;
             if (this.isDead()) {
                 this.playAnimation(this.IMAGES_DEAD);
             } else if (this.isHurt()) {

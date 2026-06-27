@@ -35,7 +35,7 @@ class ThrowableObject extends MovableObject {
         this.acceleration = 0;
         setTimeout(() => {
             this.world.throwableObjects =
-                this.world.throwableObjects.filter(obj => obj !== this);
+                this.world.throwableObjects.filter(obj => obj != this);
         }, this.IMAGES_BOTTLE_SPLASH.length * 50);
     }
 

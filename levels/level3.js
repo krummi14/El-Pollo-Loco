@@ -1,5 +1,4 @@
 let level3;
-
 let enemies3 = [
     new Chicken(),
     new Chicken(),
@@ -8,9 +7,7 @@ let enemies3 = [
     new Chicken(),
     new Endboss()
 ];
-
 let clouds3 = [];
-
 let collectibles3 = [
     new Collectible('coin'),
     new Collectible('coin'),

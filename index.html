@@ -33,6 +33,9 @@
         <img src="img/animation/leaf.png" class="leaf" style="animation-delay: 0s">
         <img src="img/animation/leaf2.png" class="leaf" style="animation-delay: 2s">
         <img src="img/animation/leaf2.png" class="leaf" style="animation-delay: 5s">
+        <img src="img/animation/leaf2.png" class="leaf2" style="animation-delay: 1s">
+        <img src="img/animation/leaf.png" class="leaf2" style="animation-delay: 3s">
+        <img src="img/animation/leaf.png" class="leaf2" style="animation-delay: 6s">
         <div class="startscreen_btns">
             <button id="startBtn" class="generally_btn start_btn kill_btn" onclick="startGame()">Start Game</button>
             <button id="optnBtn" class="generally_btn optn_btn kill_btn" onclick="openOption()">Options</button>
@@ -46,6 +49,15 @@
 
         </canvas>
         <button class="fullscreen_btn" onclick="toggleFullscreen()">⛶</button>
+    </div>
+
+    <div id="winLostScreen" class="win_lost_screen display_none">
+        <img src="img/You won, you lost/You won A.png" id="winImg" class="win_image">
+        <img src="img/You won, you lost/You lost b.png" id="lostImg" class="lost_image display_none">
+        <div class="btn_direction">
+            <button class="generally_btn win_btn kill_btn" onclick="startGame()">Restart Game</button>
+            <button class="generally_btn win_btn kill_btn" onclick="openStartScreen()">Back to Startscreen</button>
+        </div>
     </div>
 
     <div id="gameIntroduction" class="gameIntroduction display_none">
@@ -93,9 +105,15 @@
                 Hühner, die so loco sind, dass selbst der Tequila Angst bekommt.<br><br>
                 Zum Glück hat Pepe seine treuen <strong>Salsa-Flaschen</strong> bei sich.
                 Und glaub mir, mi amigo… diese verrückten Hühner hassen Salsa mehr als alles andere.<br><br>
+
+                <strong>Doch merke dir eines:</strong>
+                Pepe kann nur bestehen, wenn er alle Babychickens und Chickens besiegt
+                <strong>und jede Münze einsammelt, die seinen Weg kreuzt.</strong><br><br>
+
                 <strong>Level 1:</strong> Babychickens<br>
                 <strong>Level 2:</strong> Babychickens und Chickens<br>
                 <strong>Level 3:</strong> Chickens und der Endboss <strong>Chicken#</strong><br><br>
+
                 Und jetzt, Amigo… beginnt Peps Reise.
             </p>
             <button class="generally_btn intro_btn kill_btn" onclick="closeStory()">Back</button>

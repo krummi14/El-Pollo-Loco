@@ -150,4 +150,17 @@ class MovableObject extends DrawableObject {
             this.otherDirection = true;
         }
     }
+
+    stopSound() {
+        if (this.sound) {
+            this.sound.pause();
+            this.sound.currentTime = 0;
+        }
+        if (this.sounds) {
+            Object.values(this.sounds).forEach(sound => {
+                sound.pause();
+                sound.currentTime = 0;
+            });
+        }
+    }
 }
