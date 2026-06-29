@@ -12,7 +12,7 @@ let collectibles1 = [
     new Collectible('bottleOne'),
     new Collectible('bottleTwo'),
     new Collectible('bottleTwo'),
-    new Collectible('bottleOne'),
+    new Collectible('bottleOne')
 ];
 
 function initLevel() {
@@ -29,4 +29,22 @@ function pushCloudsIntoLevel() {
     for (let i = 0; i < 4; i++) {
         clouds1.push(new Cloud(clouds1, i));
     }
+}
+
+function resetLevel1() {
+    enemies1 = [
+        new Babychicken(),
+        new Babychicken(),
+        new Babychicken(),
+        new Babychicken(),
+        new Babychicken(),
+        new Babychicken()
+    ];
+    collectibles1 = [
+        new Collectible('bottleOne'),
+        new Collectible('bottleTwo'),
+        new Collectible('bottleTwo'),
+        new Collectible('bottleOne')
+    ];
+    clouds1 = [];
 }

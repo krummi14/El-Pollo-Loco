@@ -38,20 +38,20 @@ class MovableObject extends DrawableObject {
         if (this instanceof ThrowableObject) { //ThrowableObjects should always fall
             return true;
         } else {
-            return this.y < 130
+            return this.y < 139;
         }
     }
 
     isColliding(obj) {
-        return this.x + this.width > obj.x &&
-            this.y + this.height > obj.y &&
-            this.x < obj.x &&
-            this.y < obj.y + obj.height;
+        return this.x + this.width > obj.x - 10 &&
+            this.y + this.height > obj.y - 10 &&
+            this.x < obj.x + obj.width + 10 &&
+            this.y < obj.y + obj.height + 10;
     }
 
     isJumpKill(obj) {
         return this.speedY < 0 &&
-            this.y + this.height <= obj.y + obj.height * 0.9;
+            this.y + this.height <= obj.y + obj.height * 0.95;
     }
 
     hit() {
@@ -77,7 +77,8 @@ class MovableObject extends DrawableObject {
     isWaiting() {
         let timePassed = new Date().getTime() - this.lastAction;
         timePassed = timePassed / 1000;
-        return timePassed <= 3 &&
+        return timePassed > 0.25 &&
+            timePassed <= 8 &&
             !this.world.keyboard.RIGHT &&
             !this.world.keyboard.LEFT &&
             !this.world.keyboard.SPACE &&
@@ -105,7 +106,7 @@ class MovableObject extends DrawableObject {
     isSleeping() {
         let timePassed = new Date().getTime() - this.lastAction;
         timePassed = timePassed / 1000;
-        return timePassed > 3 &&
+        return timePassed > 8 &&
             !this.world.keyboard.RIGHT &&
             !this.world.keyboard.LEFT &&
             !this.world.keyboard.SPACE &&

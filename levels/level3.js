@@ -31,3 +31,22 @@ function pushCloudsIntoLevel3() {
         clouds3.push(new Cloud(clouds3, i));
     }
 }
+
+function resetLevel3() {
+    enemies3 = [
+        new Chicken(),
+        new Chicken(),
+        new Chicken(),
+        new Chicken(),
+        new Chicken(),
+        new Endboss()
+    ];
+    clouds3 = [];
+    collectibles3 = [
+        new Collectible('bottleOne'),
+        new Collectible('bottleTwo'),
+        new Collectible('bottleTwo'),
+        new Collectible('bottleTwo'),
+        new Collectible('bottleOne')
+    ];
+}

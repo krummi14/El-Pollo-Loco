@@ -76,6 +76,7 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_HURTING);
         this.loadImages(this.IMAGES_WAITING);
         this.loadImages(this.IMAGES_SLEEPING);
+        this.lastAction = Date.now();
         this.sounds = {
             snoring: this.snoring_sound,
             ouch: this.ouch_sound,
@@ -111,6 +112,12 @@ class Character extends MovableObject {
             if (!this.isAboveGround()) {
                 this.jumps = false;
             }
+            if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.SPACE) {
+                let bubble = document.getElementById("pepeThoughtBubble");
+                if (bubble && !bubble.classList.contains("hidden")) {
+                    bubble.classList.add("hidden");
+                }
+            }
             if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
                 if (this.sounds.walk.paused) {
                     this.sounds.walk.play();
@@ -144,7 +151,7 @@ class Character extends MovableObject {
                     this.playAnimation(this.IMAGES_WALKING);
                 }
             }
-        }, 50);
+        }, 150);
     }
 
     applyKnockback(force, enemyX) {

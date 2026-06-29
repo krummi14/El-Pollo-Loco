@@ -1,6 +1,6 @@
 let canvas;
 let world;
-let currentLevel = 2;
+let currentLevel = 1;
 let keyboard = new Keyboard();
 let startScreen = document.getElementById('startScreen');
 let fullScreen = document.getElementById('fullscreen');
@@ -9,20 +9,56 @@ let cursor = document.getElementById('cursor');
 let cursorImg = document.getElementById('cursorImg');
 let winImg = document.getElementById('winImg');
 let lostImg = document.getElementById('lostImg');
+let gameOverImg = document.getElementById('gameOverImg');
 let storyScreen = document.getElementById('gameStory');
 let winLostScreen = document.getElementById('winLostScreen');
+let thinkingBubble = document.getElementById("pepeThoughtBubble");
 let startScreen_sound = new Audio('audio/intromusic.mp3');
 let gameStory_sound = new Audio('audio/gameStory.mp3');
+let gameOver_sound = new Audio('audio/gameOver.wav');
 const deadChicken = 'img/3_enemies_chicken/chicken_normal/2_dead/dead.png';
 const normalChicken = 'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png';
 
 function startGame() {
+    currentLevel = 1;
     deactivateSounds();
+    setTimeout(() => {
+        thinkingBubble.classList.remove("hidden");
+    }, 1500);
     startScreen.classList.add('fade_out');
     setTimeout(() => {
         gameIsVisible();
         initGame();
     }, 800);
+}
+
+function initGame() {
+    canvas = document.getElementById("canvas");
+    changeLevel();
+}
+
+function changeLevel() {
+    if (currentLevel == 1) {
+        resetLevel1();
+        pushCloudsIntoLevel();
+        initLevel();
+        world = new World(canvas, keyboard, level1);
+        world.character.hasStarted = true;
+    }
+    if (currentLevel == 2) {
+        resetLevel2();
+        pushCloudsIntoLevel2();
+        initLevel2();
+        world = new World(canvas, keyboard, level2);
+        world.character.hasStarted = true;
+    }
+    if (currentLevel == 3) {
+        resetLevel3();
+        pushCloudsIntoLevel3();
+        initLevel3();
+        world = new World(canvas, keyboard, level3);
+        world.character.hasStarted = true;
+    }
 }
 
 function deactivateSounds() {
@@ -88,11 +124,6 @@ function cursorControl() {
     });
 }
 
-function initGame() {
-    canvas = document.getElementById("canvas");
-    changeLevel();
-}
-
 function hideScreen(screen1, screen2) {
     screen1.classList.remove('display_none');
     screen2.classList.add('display_none');
@@ -103,27 +134,6 @@ function openStartScreen() {
     deactivateSounds();
     startScreen_sound.play();
     fullScreen.classList.add('display_none');
-}
-
-function changeLevel() {
-    if (currentLevel == 1) {
-        pushCloudsIntoLevel();
-        initLevel();
-        world = new World(canvas, keyboard, level1);
-        world.character.hasStarted = true;
-    }
-    if (currentLevel == 2) {
-        pushCloudsIntoLevel2();
-        initLevel2();
-        world = new World(canvas, keyboard, level2);
-        world.character.hasStarted = true;
-    }
-    if (currentLevel == 3) {
-        pushCloudsIntoLevel3();
-        initLevel3();
-        world = new World(canvas, keyboard, level3);
-        world.character.hasStarted = true;
-    }
 }
 
 function toggleFullscreen() {
@@ -172,6 +182,13 @@ function showLostScreen() {
     winLostScreen.classList.remove('display_none');
     winImg.classList.add('display_none');
     lostImg.classList.remove('display_none');
+}
+
+function showGameOverScreen() {
+    winLostScreen.classList.remove('display_none');
+    winImg.classList.add('display_none');
+    gameOverImg.classList.remove('display_none');
+    gameOver_sound.play();
 }
 
 window.addEventListener("click", startIntroMusicOnce);

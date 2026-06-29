@@ -27,7 +27,7 @@ class Babychicken extends MovableObject {
         this.stunDuration = 0;
         this.loot = {
             coins: 1,
-            coinChance: 0.3,
+            coinChance: 1,
             bottles: 0,
             bottleChance: 0
         };

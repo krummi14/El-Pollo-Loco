@@ -48,6 +48,7 @@ class World {
             this.checkGateOpenByPlayer();
             this.checkIfCharacterReachedExit();
             this.checkLost();
+            this.checkGameOver();
             this.convertDeadChickensToCoins();
         }, 200);
     }
@@ -64,7 +65,12 @@ class World {
         if (this.keyboard.D && this.character.bottles > 0) {
             this.character.bottles--;
             this.statusBarBottle.setPercentage(this.character.bottles * 20);
-            let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
+            let direction = this.character.otherDirection ? 1 : -1;
+            let bottle = new ThrowableObject(
+                this.character.x + this.character.width / 2,
+                this.character.y + this.character.height / 2,
+                direction
+            );
             bottle.world = this;
             this.throwableObjects.push(bottle);
         }
@@ -129,6 +135,7 @@ class World {
                     bottle.isColliding(enemy)) {
                     enemy.hit();
                     if (enemy.isDead()) {
+                        enemy.isConvertedToCoin = true;  
                         enemy.startCoinConversion();
                     }
                     bottle.splash();
@@ -141,7 +148,7 @@ class World {
         this.collectibles.forEach((item, index) => {
             if (this.character.isColliding(item)) {
                 if (item.type == 'coin') {
-                    this.character.coins++;
+                    this.character.coins = Math.min(this.character.coins + 1, 5);
                     this.statusBarCoins.setPercentage(this.character.coins * 20);
                 } else if (item.type == 'bottleOne' || item.type == 'bottleTwo') {
                     this.character.bottles++;
@@ -158,7 +165,7 @@ class World {
             this.hintMessage = "";
             return;
         }
-        if (this.character.coins == this.level.totalCoins) {
+        if (this.character.coins >= 5) {
             this.levelEnd.canBeOpened = true;
             this.hintMessage = 'Please press "F" to enter next level';
         } else {
@@ -195,7 +202,7 @@ class World {
     }
 
     checkLost() {
-        if (this.gameState === 'running' &&
+        if (this.gameState == 'running' &&
             this.character.energy <= 0 &&
             this.endboss &&
             this.endboss.energy > 0 &&
@@ -203,6 +210,17 @@ class World {
             this.gameState = 'lost';
             this.stopAllGameSounds();
             showLostScreen();
+        }
+    }
+
+    checkGameOver() {
+        if (this.gameState == 'running' &&
+            this.character.energy <= 0 &&
+            (!this.endboss || this.endboss.energy <= 0) &&
+            this.character.hasStarted) {
+            this.gameState = 'gameover';
+            this.stopAllGameSounds();
+            showGameOverScreen();
         }
     }
 

@@ -45,15 +45,18 @@
 
     <div id="fullscreen" class="fullscreen display_none">
         <h1 class="game_headline">El Pollo Loco</h1>
-        <canvas id="canvas" class="canvas" width="720px" height="480px">
-
-        </canvas>
+        <canvas id="canvas" class="canvas" width="720px" height="480px"></canvas>
         <button class="fullscreen_btn" onclick="toggleFullscreen()">⛶</button>
+    </div>
+
+    <div id="pepeThoughtBubble" class="thought_bubble hidden">
+        <p>Let’s go Amigo, <br>find with me the ENDBOSS!!!</p>
     </div>
 
     <div id="winLostScreen" class="win_lost_screen display_none">
         <img src="img/You won, you lost/You won A.png" id="winImg" class="win_image">
         <img src="img/You won, you lost/You lost b.png" id="lostImg" class="lost_image display_none">
+        <img src="img/You won, you lost/Game Over.png" id="gameOverImg" class="lost_image display_none">
         <div class="btn_direction">
             <button class="generally_btn win_btn kill_btn" onclick="startGame()">Restart Game</button>
             <button class="generally_btn win_btn kill_btn" onclick="openStartScreen()">Back to Startscreen</button>

@@ -5,6 +5,7 @@ class Level {
     collectibles;
     level_end_x = 2200;
     level_start_x = 100;
+    requiredCoins = 5;
 
     constructor(enemies, clouds, collectibles, levelEnd, levelStart) {
         this.enemies = enemies;
