@@ -16,10 +16,18 @@ let gameStory_sound = new Audio('audio/gameStory.mp3');
 const deadChicken = 'img/3_enemies_chicken/chicken_normal/2_dead/dead.png';
 const normalChicken = 'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png';
 
-
 function startGame() {
-    initGame();
-    hideStartScreen();
+    startScreen.classList.add('fade_out');
+    setTimeout(() => {
+        gameIsVisible();
+        initGame();
+    }, 800);
+}
+
+function gameIsVisible() {
+    startScreen.classList.add('display_none');
+    fullScreen.classList.remove('display_none');
+    fullScreen.classList.add('visible');
     winLostScreen.classList.add('display_none');
 }
 
@@ -92,16 +100,19 @@ function changeLevel() {
         pushCloudsIntoLevel();
         initLevel();
         world = new World(canvas, keyboard, level1);
+        world.character.hasStarted = true;
     }
     if (currentLevel == 2) {
         pushCloudsIntoLevel2();
         initLevel2();
         world = new World(canvas, keyboard, level2);
+        world.character.hasStarted = true;
     }
     if (currentLevel == 3) {
         pushCloudsIntoLevel3();
         initLevel3();
         world = new World(canvas, keyboard, level3);
+        world.character.hasStarted = true;
     }
 }
 

@@ -10,8 +10,10 @@ class MovableObject extends DrawableObject {
     lastAction = 0;
     direction = 0;
     hasPlayedSound = false;
-    borderLeft = 60;
+    borderLeft = 100;
     borderRight = 2200;
+    isConverting = false;
+    isConvertedToCoin = false
 
     applyGravity() {
         setInterval(() => {
@@ -107,6 +109,14 @@ class MovableObject extends DrawableObject {
         this.currentImage++;
     }
 
+    startCoinConversion() {
+        if (this.isConverting) return;
+        this.isConverting = true;
+        setTimeout(() => {
+            this.isConvertedToCoin = true;
+        }, 2000);
+    }
+
     moveRight() {
         this.x += this.speed;
     }
@@ -142,7 +152,7 @@ class MovableObject extends DrawableObject {
         if (this.x <= this.borderLeft) {
             this.direction = 'right';
         }
-        if (this.direction === 'left') {
+        if (this.direction == 'left') {
             this.moveLeft();
             this.otherDirection = false;
         } else {

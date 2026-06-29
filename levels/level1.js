@@ -13,11 +13,6 @@ let collectibles1 = [
     new Collectible('bottleTwo'),
     new Collectible('bottleTwo'),
     new Collectible('bottleOne'),
-    new Collectible('coin'),
-    new Collectible('coin'),
-    new Collectible('coin'),
-    new Collectible('coin'),
-    new Collectible('coin'),
 ];
 
 function initLevel() {

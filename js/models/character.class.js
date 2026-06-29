@@ -95,7 +95,7 @@ class Character extends MovableObject {
                 this.lastAction = new Date().getTime();
                 this.sounds.walk.play();
             }
-            if (this.world.keyboard.LEFT && this.x > 0) {
+            if (this.world.keyboard.LEFT && this.x > this.world.level.level_start_x) {
                 this.moveLeft();
                 this.otherDirection = true;
                 this.lastAction = new Date().getTime();

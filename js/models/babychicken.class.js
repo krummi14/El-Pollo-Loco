@@ -18,6 +18,8 @@ class Babychicken extends MovableObject {
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGE_DEAD);
         this.x = 400 + Math.random() * 2000;
+        this.borderLeft = 400;
+        this.borderRight = 2000;
         this.speed = 0.2 + Math.random() * 0.3;
         this.setDirection();
         this.animateBabychicken();
@@ -35,6 +37,7 @@ class Babychicken extends MovableObject {
             }
             if (this.isDead()) {
                 this.babyChicken_sound.pause();
+                this.startCoinConversion();
                 return;
             }
             this.moveWithBorders();

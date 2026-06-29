@@ -4,16 +4,16 @@ class Level {
     backgroundObjects;
     collectibles;
     level_end_x = 2200;
+    level_start_x = 100;
 
-    constructor(enemies, clouds, collectibles, levelEnd) {
+    constructor(enemies, clouds, collectibles, levelEnd, levelStart) {
         this.enemies = enemies;
         this.clouds = clouds;
         this.collectibles = collectibles;
         this.levelEnd = levelEnd;
-
+        this.levelStart = levelStart
         this.backgroundObjects = [];
         this.createBackground();
-
         this.safeNumberOfCurrentCoins();
     }
 

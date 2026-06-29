@@ -47,6 +47,7 @@ class World {
             this.checkGateOpenByPlayer();
             this.checkIfCharacterReachedExit();
             this.checkLost();
+            this.convertDeadChickensToCoins();
         }, 200);
     }
 
@@ -72,18 +73,16 @@ class World {
         this.betweenJumpingCharacterAndChicken();
         this.betweenCharacterAndEnemies();
         this.betweenEndbossAndBottle();
-        this.betweenChckenAndBottle();
+        this.betweenChickenAndBottle();
     }
 
     betweenCharacterAndEnemies() {
         this.level.enemies.forEach((enemy) => {
-            if (enemy instanceof Chicken || enemy instanceof Babychicken && enemy.energy <= 0) {
-                return;
-            }
+            if (enemy.energy <= 0) return;
             if (this.character.isColliding(enemy)) {
                 this.character.hit();
                 this.statusBarHealth.setPercentage(this.character.energy);
-            };
+            }
         });
     }
 
@@ -93,6 +92,7 @@ class World {
                 if (this.character.isColliding(enemy)) {
                     if (this.character.isJumpKill(enemy)) {
                         enemy.energy = 0;
+                        enemy.startCoinConversion();
                         this.character.jump();
                     }
                 }
@@ -112,11 +112,13 @@ class World {
         });
     }
 
-    betweenChckenAndBottle() {
-        this.throwableObjects.forEach((bottle, bottleIndex) => {
+    betweenChickenAndBottle() {
+        this.throwableObjects.forEach((bottle) => {
             this.level.enemies.forEach(enemy => {
-                if (enemy instanceof Chicken || enemy instanceof Babychicken && bottle.isColliding(enemy)) {
+                if ((enemy instanceof Chicken || enemy instanceof Babychicken) &&
+                    bottle.isColliding(enemy)) {
                     enemy.energy = 0;
+                    enemy.startCoinConversion();
                     bottle.splash();
                 }
             });
@@ -181,10 +183,27 @@ class World {
     }
 
     checkLost() {
-        if (this.character.energy <= 0 && this.endboss && this.endboss.energy > 0) {
+        if (this.gameState === 'running' &&
+            this.character.energy <= 0 &&
+            this.endboss &&
+            this.endboss.energy > 0 &&
+            this.character.hasStarted) {
             this.gameState = 'lost';
             this.stopAllGameSounds();
             showLostScreen();
+        }
+    }
+
+    convertDeadChickensToCoins() {
+        for (let i = this.level.enemies.length - 1; i >= 0; i--) {
+            let enemy = this.level.enemies[i];
+            if ((enemy instanceof Chicken || enemy instanceof Babychicken) && enemy.isConvertedToCoin) {
+                let coin = new Collectible('coin');
+                coin.x = enemy.x;
+                coin.y = enemy.y;
+                this.level.enemies.splice(i, 1);
+                this.collectibles.push(coin);
+            }
         }
     }
 
@@ -216,9 +235,9 @@ class World {
         this.drawBackgrounds();
         this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.level.clouds);
-        this.addObjectsToMap(this.level.enemies)
-        this.addObjectsToMap(this.throwableObjects);
+        this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.collectibles);
+        this.addObjectsToMap(this.throwableObjects);
         this.addToMap(this.character);
         if (this.levelEnd) {
             this.addToMap(this.levelEnd);

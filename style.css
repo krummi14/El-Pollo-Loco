@@ -197,6 +197,12 @@ canvas {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.fullscreen.visible {
+    opacity: 1;
 }
 
 .canvas {
@@ -335,6 +341,7 @@ canvas {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 120px;
     height: 100%;
     width: 100%;
     background: rgba(0, 0, 0, 0.4);
@@ -344,7 +351,7 @@ canvas {
 }
 
 .win_image {
-    width: 640px;
+    width: 560px;
     opacity: 0.8;
     animation: pulse 3s infinite ease-in-out;
 }
@@ -387,7 +394,6 @@ canvas {
     display: flex;
     flex-direction: row;
     gap: 32px;
-    padding: 32px 0;
 }
 
 /* ----- Generally ----- */

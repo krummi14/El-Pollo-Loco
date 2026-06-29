@@ -16,7 +16,9 @@ class Chicken extends MovableObject {
         super().loadImage('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGE_DEAD);
-        this.x = 400 + Math.random() * 2000;
+        this.x = 400 + Math.random() * 1600;
+        this.borderLeft = 400;
+        this.borderRight = 2000;
         this.speed = 0.15 + Math.random() * 0.5;
         this.sound = this.chicken_sound;
         this.setDirection();
@@ -35,15 +37,10 @@ class Chicken extends MovableObject {
             }
             if (this.isDead()) {
                 this.chicken_sound.pause();
+                this.startCoinConversion();
                 return;
             }
-            if (this.direction == 'left') {
-                this.moveLeft();
-                this.otherDirection = false;
-            } else {
-                this.moveRight();
-                this.otherDirection = true;
-            }
+            this.moveWithBorders();
         }, 1000 / 60);
         setInterval(() => {
             if (this.isDead()) {

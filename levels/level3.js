@@ -9,11 +9,6 @@ let enemies3 = [
 ];
 let clouds3 = [];
 let collectibles3 = [
-    new Collectible('coin'),
-    new Collectible('coin'),
-    new Collectible('coin'),
-    new Collectible('coin'),
-    new Collectible('coin'),
     new Collectible('bottleOne'),
     new Collectible('bottleTwo'),
     new Collectible('bottleTwo'),
