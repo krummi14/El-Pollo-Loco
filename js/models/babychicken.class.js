@@ -18,27 +18,55 @@ class Babychicken extends MovableObject {
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGE_DEAD);
         this.x = 400 + Math.random() * 2000;
+        this.energy = 20;
         this.borderLeft = 400;
         this.borderRight = 2000;
-        this.speed = 0.2 + Math.random() * 0.3;
+        this.speed = 0.35 + Math.random() * 0.25;
+        this.damageGiven = 5;
+        this.knockbackForce = 3;
+        this.stunDuration = 0;
+        this.loot = {
+            coins: 1,
+            coinChance: 0.3,
+            bottles: 0,
+            bottleChance: 0
+        };
         this.setDirection();
         this.animateBabychicken();
     }
 
     animateBabychicken() {
         setInterval(() => {
-            if (!this.isDead() && !this.hasPlayedSound && this.isVisible()) {
+            if (!this.isDead() && !this.hasPlayedSound && this.isVisible() && this.world.soundEnabled) {
                 this.babyChicken_sound.play();
                 this.hasPlayedSound = true;
             }
-            if (this.hasPlayedSound && !this.isVisible()) {
+            if (this.hasPlayedSound && (!this.isVisible() || !this.world.soundEnabled)) {
                 this.babyChicken_sound.pause();
                 this.hasPlayedSound = false;
+            }
+            if (!this.isDead() && Math.random() < 0.005) {
+                this.y -= 15;
+                setTimeout(() => {
+                    this.y += 15;
+                }, 150);
+            }
+            if (Math.random() < 0.01) {
+                this.direction = this.direction == 'left' ? 'right' : 'left';
             }
             if (this.isDead()) {
                 this.babyChicken_sound.pause();
                 this.startCoinConversion();
                 return;
+            }
+            let distance = this.getDistanceToCharacter();
+            if (!this.isNearBorder(100)) {
+                if (Math.abs(distance) < 200) {
+                    this.direction = distance < 0 ? 'right' : 'left';
+                }
+            }
+            if (Math.random() < 0.01) {
+                this.direction = this.direction == 'left' ? 'right' : 'left';
             }
             this.moveWithBorders();
         }, 1000 / 60);
@@ -48,6 +76,6 @@ class Babychicken extends MovableObject {
             } else {
                 this.playAnimation(this.IMAGES_WALKING);
             }
-        }, 200);
+        }, 120);
     };
 }

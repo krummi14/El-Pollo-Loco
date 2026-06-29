@@ -17,9 +17,19 @@ class Chicken extends MovableObject {
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGE_DEAD);
         this.x = 400 + Math.random() * 1600;
+        this.energy = 40;
         this.borderLeft = 400;
         this.borderRight = 2000;
-        this.speed = 0.15 + Math.random() * 0.5;
+        this.speed = 0.15 + Math.random() * 0.15;
+        this.damageGiven = 15;
+        this.knockbackForce = 8;
+        this.stunDuration = 200;
+        this.loot = {
+            coins: 2,
+            coinChance: 0.8,
+            bottles: 1,
+            bottleChance: 0.2
+        };
         this.sound = this.chicken_sound;
         this.setDirection();
         this.animateChicken();
@@ -27,13 +37,19 @@ class Chicken extends MovableObject {
 
     animateChicken() {
         setInterval(() => {
-            if (!this.isDead() && !this.hasPlayedSound && this.isVisible()) {
+            if (!this.isDead() && !this.hasPlayedSound && this.isVisible() && this.world.soundEnabled) {
                 this.chicken_sound.play();
                 this.hasPlayedSound = true;
             }
-            if (this.hasPlayedSound && !this.isVisible()) {
+            if (this.hasPlayedSound && (!this.isVisible() || !this.world.soundEnabled)) {
                 this.chicken_sound.pause();
                 this.hasPlayedSound = false;
+            }
+            let distance = this.getDistanceToCharacter();
+            if (!this.isNearBorder(100)) {
+                if (Math.abs(distance) < 300) {
+                    this.direction = distance < 0 ? 'left' : 'right';
+                }
             }
             if (this.isDead()) {
                 this.chicken_sound.pause();

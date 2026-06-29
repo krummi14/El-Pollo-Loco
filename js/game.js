@@ -1,6 +1,6 @@
 let canvas;
 let world;
-let currentLevel = 3;
+let currentLevel = 2;
 let keyboard = new Keyboard();
 let startScreen = document.getElementById('startScreen');
 let fullScreen = document.getElementById('fullscreen');
@@ -11,17 +11,28 @@ let winImg = document.getElementById('winImg');
 let lostImg = document.getElementById('lostImg');
 let storyScreen = document.getElementById('gameStory');
 let winLostScreen = document.getElementById('winLostScreen');
-let starScreen_sound = new Audio('audio/intromusic.mp3');
+let startScreen_sound = new Audio('audio/intromusic.mp3');
 let gameStory_sound = new Audio('audio/gameStory.mp3');
 const deadChicken = 'img/3_enemies_chicken/chicken_normal/2_dead/dead.png';
 const normalChicken = 'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png';
 
 function startGame() {
+    deactivateSounds();
     startScreen.classList.add('fade_out');
     setTimeout(() => {
         gameIsVisible();
         initGame();
     }, 800);
+}
+
+function deactivateSounds() {
+    startScreen_sound.pause();
+    startScreen_sound.currentTime = 0;
+    gameStory_sound.pause();
+    gameStory_sound.currentTime = 0;
+    if (world) {
+        world.stopAllGameSounds();
+    }
 }
 
 function gameIsVisible() {
@@ -82,17 +93,16 @@ function initGame() {
     changeLevel();
 }
 
-function hideStartScreen() {
-    fullScreen.classList.remove('display_none');
-    startScreen.classList.add('display_none');
-    starScreen_sound.pause();
+function hideScreen(screen1, screen2) {
+    screen1.classList.remove('display_none');
+    screen2.classList.add('display_none');
 }
 
 function openStartScreen() {
-    startScreen.classList.remove('display_none');
-    winLostScreen.classList.add('display_none');
+    hideScreen(startScreen, winLostScreen);
+    deactivateSounds();
+    startScreen_sound.play();
     fullScreen.classList.add('display_none');
-    starScreen_sound.play();
 }
 
 function changeLevel() {
@@ -147,8 +157,8 @@ function closeFullscreen() {
 function startIntroMusicOnce(e) {
     if (e.target.id == "startBtn") return;
     if (startScreen.classList.contains("display_none")) return;
-    starScreen_sound.loop = true;
-    starScreen_sound.play();
+    startScreen_sound.loop = true;
+    startScreen_sound.play();
     window.removeEventListener("click", startIntroMusicOnce);
 }
 

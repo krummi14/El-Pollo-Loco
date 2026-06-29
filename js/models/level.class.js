@@ -29,6 +29,8 @@ class Level {
     }
 
     safeNumberOfCurrentCoins() {
-        this.totalCoins = this.collectibles.filter(c => c.type == 'coin').length;
+        this.totalCoins = this.enemies.reduce((sum, enemy) => {
+            return sum + enemy.loot.coins;
+        }, 0);
     }
 }

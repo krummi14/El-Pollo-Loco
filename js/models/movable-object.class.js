@@ -13,7 +13,16 @@ class MovableObject extends DrawableObject {
     borderLeft = 100;
     borderRight = 2200;
     isConverting = false;
-    isConvertedToCoin = false
+    isConvertedToCoin = false;
+    damageGiven = 10;
+    knockbackForce = 5;
+    stunDuration = 0;
+    loot = {
+        coins: 0,
+        bottles: 0,
+        coinChance: 1,
+        bottleChance: 0
+    };
 
     applyGravity() {
         setInterval(() => {
@@ -42,7 +51,7 @@ class MovableObject extends DrawableObject {
 
     isJumpKill(obj) {
         return this.speedY < 0 &&
-            this.y + this.height <= obj.y + obj.height * 0.5;
+            this.y + this.height <= obj.y + obj.height * 0.9;
     }
 
     hit() {
@@ -80,6 +89,17 @@ class MovableObject extends DrawableObject {
         if (!this.world || !this.world.levelEnd) return false;
         let distance = Math.abs(this.x - this.world.levelEnd.x);
         return distance < 150;
+    }
+
+    getDistanceToCharacter() {
+        if (!this.world || !this.world.character) return Infinity;
+        return this.world.character.x - this.x;
+    }
+
+    isNearBorder(offset = 100) {
+        let nearLeft = this.x <= this.borderLeft + offset;
+        let nearRight = this.x >= this.borderRight - offset;
+        return nearLeft || nearRight;
     }
 
     isSleeping() {

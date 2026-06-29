@@ -66,6 +66,7 @@ class Character extends MovableObject {
     ouch_sound = new Audio('audio/ouch.wav');
     jumping_sound = new Audio('audio/jump.wav');
     walking_sound = new Audio('audio/walking.wav');
+    isStunned = false;
 
     constructor() {
         super().loadImage('img/2_character_pepe/2_walk/W-21.png');
@@ -87,6 +88,7 @@ class Character extends MovableObject {
 
     animateCharacter() {
         setInterval(() => {
+            if (this.world.character.isStunned) return;
             if (this.world.gameState != 'running') return;
             if (this.world.gameState == 'won') return;
             if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
@@ -143,5 +145,18 @@ class Character extends MovableObject {
                 }
             }
         }, 50);
+    }
+
+    applyKnockback(force, enemyX) {
+        let direction = enemyX < this.x ? 1 : -1;
+        this.x += direction * force;
+    }
+
+    applyStun(duration) {
+        if (duration <= 0) return;
+        this.isStunned = true;
+        setTimeout(() => {
+            this.isStunned = false;
+        }, duration);
     }
 }

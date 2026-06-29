@@ -38,6 +38,12 @@ class Endboss extends MovableObject {
         this.loadImages(this.IMAGES_DEAD);
         this.energy = 20;
         this.speed = 0.15 + Math.random() * 0.5;
+        this.loot = {
+            coins: 10,
+            bottles: 3,
+            coinChance: 1,
+            bottleChance: 0
+        };
         this.sound = this.endboss_sound;
         this.waitForWorldThenStart();
     }

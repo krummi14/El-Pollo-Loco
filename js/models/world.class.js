@@ -11,6 +11,7 @@ class World {
     throwableObjects = [];
     hintMessage = "";
     gameState = 'running';
+    soundEnabled = true;
 
     constructor(canvas, keyboard, level) {
         this.ctx = canvas.getContext('2d');
@@ -81,7 +82,14 @@ class World {
             if (enemy.energy <= 0) return;
             if (this.character.isColliding(enemy)) {
                 this.character.hit();
+                this.character.energy -= enemy.damageGiven;
+                if (this.character.energy < 0) this.character.energy = 0;
                 this.statusBarHealth.setPercentage(this.character.energy);
+                this.character.applyKnockback(enemy.knockbackForce, enemy.x);
+                this.character.applyStun(enemy.stunDuration);
+                if (enemy.isDead()) {
+                    enemy.startCoinConversion();
+                }
             }
         });
     }
@@ -91,8 +99,10 @@ class World {
             if (enemy instanceof Chicken || enemy instanceof Babychicken) {
                 if (this.character.isColliding(enemy)) {
                     if (this.character.isJumpKill(enemy)) {
-                        enemy.energy = 0;
-                        enemy.startCoinConversion();
+                        enemy.hit();
+                        if (enemy.isDead()) {
+                            enemy.startCoinConversion();
+                        }
                         this.character.jump();
                     }
                 }
@@ -117,8 +127,10 @@ class World {
             this.level.enemies.forEach(enemy => {
                 if ((enemy instanceof Chicken || enemy instanceof Babychicken) &&
                     bottle.isColliding(enemy)) {
-                    enemy.energy = 0;
-                    enemy.startCoinConversion();
+                    enemy.hit();
+                    if (enemy.isDead()) {
+                        enemy.startCoinConversion();
+                    }
                     bottle.splash();
                 }
             });
@@ -198,11 +210,31 @@ class World {
         for (let i = this.level.enemies.length - 1; i >= 0; i--) {
             let enemy = this.level.enemies[i];
             if ((enemy instanceof Chicken || enemy instanceof Babychicken) && enemy.isConvertedToCoin) {
-                let coin = new Collectible('coin');
-                coin.x = enemy.x;
-                coin.y = enemy.y;
+                this.dropRandomCoins(enemy);
+                this.dropRandomBottles(enemy);
                 this.level.enemies.splice(i, 1);
+            }
+        }
+    }
+
+    dropRandomCoins(enemy) {
+        for (let c = 0; c < enemy.loot.coins; c++) {
+            if (Math.random() < enemy.loot.coinChance) {
+                let coin = new Collectible('coin');
+                coin.x = enemy.x + c * 15;
+                coin.y = enemy.y;
                 this.collectibles.push(coin);
+            }
+        }
+    }
+
+    dropRandomBottles(enemy) {
+        for (let b = 0; b < enemy.loot.bottles; b++) {
+            if (Math.random() < enemy.loot.bottleChance) {
+                let bottle = new Collectible('bottleOne');
+                bottle.x = enemy.x + b * 15;
+                bottle.y = enemy.y;
+                this.collectibles.push(bottle);
             }
         }
     }
@@ -225,6 +257,7 @@ class World {
     }
 
     stopAllGameSounds() {
+        this.soundEnabled = false;
         this.level.enemies.forEach(enemy => enemy.stopSound());
         this.character.stopSound();
     }
