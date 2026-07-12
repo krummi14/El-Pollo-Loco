@@ -44,13 +44,24 @@
     </div>
 
     <div id="fullscreen" class="fullscreen display_none">
-        <h1 class="game_headline">El Pollo Loco</h1>
+        <h1 id="gameHeadline" class="game_headline">El Pollo Loco</h1>
         <canvas id="canvas" class="canvas" width="720px" height="480px"></canvas>
         <button class="fullscreen_btn" onclick="toggleFullscreen()">⛶</button>
+        <div id="mobileControls" class="mobile_controls display_none">
+            <div class="left_right">
+                <button id="btnLeft" class="ctrl_btn">⬅️</button>
+                <button id="btnRight" class="ctrl_btn">➡️</button>
+            </div>
+
+            <div class="jump_throw">
+                <button id="btnJump" class="ctrl_btn">🆙</button>
+                <button id="btnThrow" class="ctrl_btn">🎯</button>
+            </div>
+        </div>
     </div>
 
     <div id="pepeThoughtBubble" class="thought_bubble hidden">
-        <p>Let’s go Amigo, <br>find with me the ENDBOSS!!!</p>
+        <p>Let’s go Amigo, <br>find the ENDBOSS with me!!!</p>
     </div>
 
     <div id="winLostScreen" class="win_lost_screen display_none">

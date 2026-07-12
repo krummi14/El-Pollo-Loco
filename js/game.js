@@ -12,7 +12,8 @@ let lostImg = document.getElementById('lostImg');
 let gameOverImg = document.getElementById('gameOverImg');
 let storyScreen = document.getElementById('gameStory');
 let winLostScreen = document.getElementById('winLostScreen');
-let thinkingBubble = document.getElementById("pepeThoughtBubble");
+let thinkingBubble = document.getElementById('pepeThoughtBubble');
+let gameHeadline = document.getElementById('gameHeadline');
 let startScreen_sound = new Audio('audio/intromusic.mp3');
 let gameStory_sound = new Audio('audio/gameStory.mp3');
 let gameOver_sound = new Audio('audio/gameOver.wav');
@@ -30,6 +31,8 @@ function startGame() {
         gameIsVisible();
         initGame();
     }, 800);
+    initMobileControls(keyboard);
+    document.getElementById("mobileControls").classList.remove("display_none");
 }
 
 function initGame() {
@@ -134,11 +137,14 @@ function openStartScreen() {
     deactivateSounds();
     startScreen_sound.play();
     fullScreen.classList.add('display_none');
+    document.getElementById("mobileControls").classList.add("display_none");
 }
 
 function toggleFullscreen() {
     if (!document.fullscreenElement) {
         openFullscreen(fullScreen);
+        gameHeadline.classList.add('display_none');
+
     } else {
         closeFullscreen();
     }
@@ -163,6 +169,14 @@ function closeFullscreen() {
         document.msExitFullscreen();
     }
 }
+
+document.addEventListener("fullscreenchange", () => {
+    if (document.fullscreenElement) {
+        gameHeadline.classList.add('display_none');
+    } else {
+        gameHeadline.classList.remove('display_none');
+    }
+});
 
 function startIntroMusicOnce(e) {
     if (e.target.id == "startBtn") return;

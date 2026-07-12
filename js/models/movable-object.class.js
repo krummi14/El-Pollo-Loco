@@ -194,4 +194,17 @@ class MovableObject extends DrawableObject {
             });
         }
     }
+
+    startChargeAttack() {
+        if (this.isCharging) return; // verhindert mehrfaches Auslösen
+
+        this.isCharging = true;
+        this.speed = 4; // schneller Sprint
+
+        // Charge endet nach 1 Sekunde
+        setTimeout(() => {
+            this.speed = 0.5;   // normale Geschwindigkeit
+            this.isCharging = false;
+        }, 1000);
+    }
 }

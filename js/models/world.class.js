@@ -77,7 +77,6 @@ class World {
     }
 
     checkCollisions() {
-        this.betweenJumpingCharacterAndChicken();
         this.betweenCharacterAndEnemies();
         this.betweenEndbossAndBottle();
         this.betweenChickenAndBottle();
@@ -86,34 +85,36 @@ class World {
     betweenCharacterAndEnemies() {
         this.level.enemies.forEach((enemy) => {
             if (enemy.energy <= 0) return;
-            if (this.character.isColliding(enemy)) {
-                this.character.hit();
-                this.character.energy -= enemy.damageGiven;
-                if (this.character.energy < 0) this.character.energy = 0;
-                this.statusBarHealth.setPercentage(this.character.energy);
-                this.character.applyKnockback(enemy.knockbackForce, enemy.x);
-                this.character.applyStun(enemy.stunDuration);
-                if (enemy.isDead()) {
-                    enemy.startCoinConversion();
-                }
-            }
+            if (!this.character.isColliding(enemy)) return;
+            if (this.checkJumpKill(enemy)) return;
+            this.checkIfNoJumpKill(enemy);
         });
     }
 
-    betweenJumpingCharacterAndChicken() {
-        this.level.enemies.forEach((enemy, index) => {
-            if (enemy instanceof Chicken || enemy instanceof Babychicken) {
-                if (this.character.isColliding(enemy)) {
-                    if (this.character.isJumpKill(enemy)) {
-                        enemy.hit();
-                        if (enemy.isDead()) {
-                            enemy.startCoinConversion();
-                        }
-                        this.character.jump();
-                    }
+    checkJumpKill(enemy) {
+        if (enemy instanceof Chicken || enemy instanceof Babychicken) {
+            if (this.character.isJumpKill(enemy)) {
+                enemy.hit();
+                if (enemy.isDead()) {
+                    enemy.startCoinConversion();
                 }
+                this.character.jump();
+                return true;
             }
-        });
+        }
+        return false;
+    }
+
+    checkIfNoJumpKill(enemy) {
+        this.character.hit();
+        this.character.energy -= enemy.damageGiven;
+        if (this.character.energy < 0) this.character.energy = 0;
+        this.statusBarHealth.setPercentage(this.character.energy);
+        this.character.applyKnockback(enemy.knockbackForce, enemy.x);
+        this.character.applyStun(enemy.stunDuration);
+        if (enemy.isDead()) {
+            enemy.startCoinConversion();
+        }
     }
 
     betweenEndbossAndBottle() {
@@ -135,7 +136,7 @@ class World {
                     bottle.isColliding(enemy)) {
                     enemy.hit();
                     if (enemy.isDead()) {
-                        enemy.isConvertedToCoin = true;  
+                        enemy.isConvertedToCoin = true;
                         enemy.startCoinConversion();
                     }
                     bottle.splash();

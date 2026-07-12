@@ -430,6 +430,60 @@ canvas {
     }
 }
 
+/* ---- Mobile Buttons ----- */
+.mobile_controls {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 9999;
+    pointer-events: auto;
+}
+
+.left_right,
+.jump_throw {
+    display: flex;
+    gap: 20px;
+}
+
+.ctrl_btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    font-size: 34px;
+    font-weight: bold;
+    border: 4px solid #5a2a00;
+    background: radial-gradient(circle, #ffcc5c 0%, #ff9f1c 60%, #ff6f00 100%);
+    color: #5a2a00;
+    box-shadow:
+        0 0 10px rgba(255, 0, 0, 0.6),
+        0 0 20px rgba(255, 165, 0, 0.4),
+        inset 0 0 10px rgba(255, 255, 255, 0.4);
+    transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.ctrl_btn:active {
+    transform: scale(0.9);
+    box-shadow:
+        0 0 15px rgba(255, 0, 0, 0.8),
+        0 0 25px rgba(255, 165, 0, 0.6),
+        inset 0 0 15px rgba(255, 255, 255, 0.6);
+}
+
+.ctrl_btn::after {
+    content: "";
+    position: absolute;
+    width: 110%;
+    height: 110%;
+    border-radius: 50%;
+    top: -5%;
+    left: -5%;
+    background: radial-gradient(circle, rgba(255, 0, 0, 0.2), transparent 70%);
+    pointer-events: none;
+}
+
 /* ----- Generally ----- */
 .display_none {
     display: none;
