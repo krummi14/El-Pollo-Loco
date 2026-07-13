@@ -45,17 +45,19 @@
 
     <div id="fullscreen" class="fullscreen display_none">
         <h1 id="gameHeadline" class="game_headline">El Pollo Loco</h1>
-        <canvas id="canvas" class="canvas" width="720px" height="480px"></canvas>
-        <button class="fullscreen_btn" onclick="toggleFullscreen()">⛶</button>
-        <div id="mobileControls" class="mobile_controls display_none">
-            <div class="left_right">
-                <button id="btnLeft" class="ctrl_btn">⬅️</button>
-                <button id="btnRight" class="ctrl_btn">➡️</button>
-            </div>
+        <div class="canvas_wrapper">
+            <canvas id="canvas" class="canvas" width="720px" height="480px"></canvas>
+            <button class="fullscreen_btn" onclick="toggleFullscreen()">⛶</button>
+            <div id="mobileControls" class="mobile_controls display_none">
+                <div class="left_right">
+                    <button id="btnLeft" class="ctrl_btn">⬅️</button>
+                    <button id="btnRight" class="ctrl_btn">➡️</button>
+                </div>
 
-            <div class="jump_throw">
-                <button id="btnJump" class="ctrl_btn">🆙</button>
-                <button id="btnThrow" class="ctrl_btn">🎯</button>
+                <div class="jump_throw">
+                    <button id="btnJump" class="ctrl_btn">🆙</button>
+                    <button id="btnThrow" class="ctrl_btn">🎯</button>
+                </div>
             </div>
         </div>
     </div>

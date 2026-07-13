@@ -14,15 +14,22 @@ let storyScreen = document.getElementById('gameStory');
 let winLostScreen = document.getElementById('winLostScreen');
 let thinkingBubble = document.getElementById('pepeThoughtBubble');
 let gameHeadline = document.getElementById('gameHeadline');
+let mobileButtons = document.getElementById('mobileControls');
 let startScreen_sound = new Audio('audio/intromusic.mp3');
 let gameStory_sound = new Audio('audio/gameStory.mp3');
 let gameOver_sound = new Audio('audio/gameOver.wav');
 const deadChicken = 'img/3_enemies_chicken/chicken_normal/2_dead/dead.png';
 const normalChicken = 'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png';
 
+function checkMobile() {
+    const mobile = window.innerWidth <= 900 || ('ontouchstart' in window);
+    mobileButtons.classList.toggle("display_none", !mobile);
+}
+
 function startGame() {
     currentLevel = 1;
     deactivateSounds();
+    checkMobile();
     setTimeout(() => {
         thinkingBubble.classList.remove("hidden");
     }, 1500);
@@ -31,8 +38,6 @@ function startGame() {
         gameIsVisible();
         initGame();
     }, 800);
-    initMobileControls(keyboard);
-    document.getElementById("mobileControls").classList.remove("display_none");
 }
 
 function initGame() {
@@ -137,7 +142,7 @@ function openStartScreen() {
     deactivateSounds();
     startScreen_sound.play();
     fullScreen.classList.add('display_none');
-    document.getElementById("mobileControls").classList.add("display_none");
+    checkMobile();
 }
 
 function toggleFullscreen() {
@@ -225,4 +230,13 @@ window.addEventListener("keyup", (e) => {
     if (e.key == " ") keyboard.SPACE = false;
     if (e.key == "d") keyboard.D = false;
     if (e.key == "f") keyboard.F = false;
+});
+
+window.addEventListener("load", () => {
+    checkMobile();
+    initMobileControls(keyboard);
+});
+
+window.addEventListener("resize", () => {
+    checkMobile();
 });
