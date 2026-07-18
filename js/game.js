@@ -26,6 +26,10 @@ function checkMobile() {
     mobileButtons.classList.toggle("display_none", !mobile);
 }
 
+function isMobile() {
+    return window.innerWidth <= 900 || ('ontouchstart' in window);
+}
+
 function startGame() {
     currentLevel = 1;
     deactivateSounds();
@@ -42,6 +46,13 @@ function startGame() {
 
 function initGame() {
     canvas = document.getElementById("canvas");
+    if (!canvas) return; // Sicherheitscheck
+    if (isMobile()) {
+        resizeCanvas();
+    } else {
+        canvas.width = 720;
+        canvas.height = 480;
+    }
     changeLevel();
 }
 
@@ -130,6 +141,17 @@ function cursorControl() {
             cursorImg.src = normalChicken;
         });
     });
+}
+
+function resizeCanvas() {
+    const wrapper = document.querySelector('.canvas_wrapper');
+    const rect = wrapper.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    if (world) {
+        world.canvas = canvas;
+        world.ctx = canvas.getContext('2d');
+    }
 }
 
 function hideScreen(screen1, screen2) {
@@ -239,4 +261,7 @@ window.addEventListener("load", () => {
 
 window.addEventListener("resize", () => {
     checkMobile();
+    if (!isMobile()) return;
+    if (!canvas) return;
+    resizeCanvas();
 });

@@ -71,13 +71,17 @@ body::before {
 
 /*----- Canvas -----*/
 canvas {
+    width: 720px;
+    height: 480px;
+    display: block;
+}
+
+canvas {
     background-color: #000;
 }
 
 .canvas_wrapper {
     position: relative;
-    width: 720px;
-    height: 480px;
 }
 
 /*----- Start Screen -----*/
@@ -87,7 +91,8 @@ canvas {
     justify-content: flex-end;
     align-items: center;
     width: 100%;
-    height: 100vh;
+    height: 100svh;
+    min-height: 100svh;
     background: url('img/9_intro_outro_screens/start/startscreen_2.png') center/cover no-repeat;
     padding: 40px;
 }
@@ -205,9 +210,9 @@ canvas {
     justify-content: center;
     opacity: 0;
     transition: opacity 0.8s ease;
-
     width: 100vw;
-    height: 100vh;
+    height: 100svh;
+    min-height: 100svh;
 }
 
 .fullscreen.visible {
@@ -217,7 +222,8 @@ canvas {
 :fullscreen .fullscreen,
 .fullscreen:fullscreen {
     width: 100vw;
-    height: 100vh;
+    height: 100svh;
+    min-height: 100svh;
 }
 
 .fullscreen_btn {
@@ -241,7 +247,8 @@ canvas {
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 100vh;
+    height: 100svh;
+    min-height: 100svh;
     background: url('img/9_intro_outro_screens/start/startscreen_2.png') center/cover no-repeat;
     padding: 40px;
 }
@@ -317,7 +324,8 @@ canvas {
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 100vh;
+    height: 100svh;
+    min-height: 100svh;
     background: url('img/9_intro_outro_screens/start/startscreen_2.png') center/cover no-repeat;
     padding: 40px;
 }
@@ -495,6 +503,16 @@ canvas {
 }
 
 @media (max-width:900px) {
+    .canvas_wrapper {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 3 / 2;
+    }
+
+    canvas {
+        width: 100%;
+        height: 100%;
+    }
 
     .game_headline {
         font-size: 48px;
@@ -555,16 +573,6 @@ canvas {
         font-size: 14px;
     }
 
-    .canvas_wrapper {
-        width: 100vw;
-        height: auto;
-    }
-
-    .canvas {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 3/2;
-    }
 }
 
 @media (max-width:480px) {
@@ -585,9 +593,15 @@ canvas {
         width: 95%;
     }
 
+    .mobile_controls {
+        bottom: 20px;
+        gap: 32px;
+    }
+
     .controls li {
-        grid-template-columns: 35px 70px 1fr;
-        font-size: 15px;
+        display: grid;
+        grid-template-columns: auto auto 1fr;
+        column-gap: 12px;
     }
 
 }
