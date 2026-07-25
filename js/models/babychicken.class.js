@@ -31,6 +31,12 @@ class Babychicken extends MovableObject {
             bottles: 0,
             bottleChance: 0
         };
+        this.offset = {
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom: 5
+        };
         this.setDirection();
         this.animateBabychicken();
     }

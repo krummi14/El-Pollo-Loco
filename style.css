@@ -16,10 +16,13 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 0 auto;
+    margin: 0;
     background:
         linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
         url(img/5_background/second_half_background.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
 }
 
 body::before {
@@ -69,6 +72,30 @@ body::before {
     }
 }
 
+.sound_btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 24px;
+    transition: 0.2s;
+    z-index: 5;
+}
+
+.sound_btn:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: scale(1.1);
+}
+
+.sound_btn.muted {
+    background: rgba(120, 0, 0, 0.6);
+}
+
 /*----- Canvas -----*/
 canvas {
     width: 720px;
@@ -86,15 +113,18 @@ canvas {
 
 /*----- Start Screen -----*/
 .start_screen {
+    position: fixed;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
-    width: 100%;
-    height: 100svh;
-    min-height: 100svh;
-    background: url('img/9_intro_outro_screens/start/startscreen_2.png') center/cover no-repeat;
+    background: url('img/9_intro_outro_screens/start/startscreen_2.png') center center / cover no-repeat;
     padding: 40px;
+    overflow: hidden;
 }
 
 .generally_btn {
@@ -408,11 +438,12 @@ canvas {
     gap: 32px;
 }
 
-/* ---- Thinking bubble ----- */
+/* ---- Thought bubble ----- */
 .thought_bubble {
-    position: absolute;
-    top: 30%;
-    right: 35%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     max-width: 300px;
     padding: 20px;
     background: white;
@@ -422,7 +453,7 @@ canvas {
     font-size: 18px;
     color: #000;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    z-index: 999;
+    z-index: 9999;
     animation: bubbleFadeIn 0.8s ease-out;
 }
 
@@ -433,12 +464,54 @@ canvas {
 @keyframes bubbleFadeIn {
     from {
         opacity: 0;
-        transform: scale(0.8);
+        transform: translate(-50%, -50%) scale(0.8);
     }
 
     to {
         opacity: 1;
-        transform: scale(1);
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* ---- Mobile rotation Overlay --- */
+.rotate_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.94);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 10;
+    text-align: center;
+    padding: 20px;
+}
+
+.rotate_overlay.hidden {
+    display: none;
+}
+
+.rotate_icon {
+    height: 24px;
+    width: 32px;
+    animation: rotateHint 1.5s infinite ease-in-out;
+}
+
+@keyframes rotateHint {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(90deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
     }
 }
 
@@ -567,8 +640,6 @@ canvas {
     }
 
     .thought_bubble {
-        right: 10px;
-        top: 15%;
         max-width: 220px;
         font-size: 14px;
     }

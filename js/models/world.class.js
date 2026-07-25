@@ -275,10 +275,24 @@ class World {
         }
     }
 
+    setSoundEnabled(state) {
+        this.soundEnabled = state;
+    }
+
     stopAllGameSounds() {
         this.soundEnabled = false;
-        this.level.enemies.forEach(enemy => enemy.stopSound());
-        this.character.stopSound();
+        this.character.mute();
+        this.level.enemies.forEach(e => e.mute && e.mute());
+        this.throwableObjects.forEach(o => o.mute && o.mute());
+        this.collectibles.forEach(c => c.mute && c.mute());
+    }
+
+    resumeAllGameSounds() {
+        this.soundEnabled = true;
+        this.character.unmute();
+        this.level.enemies.forEach(e => e.unmute && e.unmute());
+        this.throwableObjects.forEach(o => o.unmute && o.unmute());
+        this.collectibles.forEach(c => c.unmute && c.unmute());
     }
 
     draw() {

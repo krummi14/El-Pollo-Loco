@@ -8,6 +8,8 @@
     <title>El Pollo Loco</title>
 
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="img/3_enemies_chicken/chicken_normal/1_walk/1_w.png">
+
     <script src="js/models/drawable-object.class.js"></script>
     <script src="js/models/movable-object.class.js"></script>
     <script src="js/models/character.class.js"></script>
@@ -29,6 +31,7 @@
 </head>
 
 <body onload="cursorControl()">
+    <button id="soundBtn" class="sound_btn kill_btn" onclick="toggleSound()">🔇</button>
     <div id="startScreen" class="start_screen">
         <img src="img/animation/leaf.png" class="leaf" style="animation-delay: 0s">
         <img src="img/animation/leaf2.png" class="leaf" style="animation-delay: 2s">
@@ -40,6 +43,13 @@
             <button id="startBtn" class="generally_btn start_btn kill_btn" onclick="startGame()">Start Game</button>
             <button id="optnBtn" class="generally_btn optn_btn kill_btn" onclick="openOption()">Options</button>
             <button id="introBtn" class="generally_btn intro_btn kill_btn" onclick="openStory()">Game Story</button>
+        </div>
+    </div>
+
+    <div id="rotateDeviceOverlay" class="rotate_overlay hidden">
+        <div class="rotate_content">
+            <img src="img/rotate/rotate_smartphone.jpg" class="rotate_icon">
+            <p>Please rotate your mobile device!</p>
         </div>
     </div>
 

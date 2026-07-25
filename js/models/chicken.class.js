@@ -30,6 +30,12 @@ class Chicken extends MovableObject {
             bottles: 1,
             bottleChance: 0.2
         };
+        this.offset = {
+            top: 20,
+            left: 20,
+            right: 20,
+            bottom: 10
+        };
         this.sound = this.chicken_sound;
         this.setDirection();
         this.animateChicken();

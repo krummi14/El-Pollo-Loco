@@ -83,43 +83,56 @@ class Character extends MovableObject {
             jump: this.jumping_sound,
             walk: this.walking_sound
         };
+        this.offset = {
+            top: 80,
+            left: 40,
+            right: 40,
+            bottom: 20
+        };
         this.applyGravity();
         this.animateCharacter();
     }
 
     animateCharacter() {
         setInterval(() => {
+            if (!this.world) return;
             if (this.world.character.isStunned) return;
             if (this.world.gameState != 'running') return;
             if (this.world.gameState == 'won') return;
             if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                 this.moveRight();
                 this.otherDirection = false;
-                this.lastAction = new Date().getTime();
-                this.sounds.walk.play();
+                this.lastAction = Date.now();
+                if (this.world.soundEnabled) {
+                    this.sounds.walk.play();
+                }
             }
             if (this.world.keyboard.LEFT && this.x > this.world.level.level_start_x) {
                 this.moveLeft();
                 this.otherDirection = true;
-                this.lastAction = new Date().getTime();
-                this.sounds.walk.play();
+                this.lastAction = Date.now();
+                if (this.world.soundEnabled) {
+                    this.sounds.walk.play();
+                }
             }
-            if (this.world.keyboard.SPACE && this.jumps == false) {
+            if (this.world.keyboard.SPACE && !this.jumps) {
                 this.jump();
-                this.lastAction = new Date().getTime();
-                this.sounds.jump.play();
+                this.lastAction = Date.now();
+                if (this.world.soundEnabled) {
+                    this.sounds.jump.play();
+                }
             }
             if (!this.isAboveGround()) {
                 this.jumps = false;
             }
             if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.SPACE) {
-                let bubble = document.getElementById("pepeThoughtBubble");
+                const bubble = document.getElementById("pepeThoughtBubble");
                 if (bubble && !bubble.classList.contains("hidden")) {
                     bubble.classList.add("hidden");
                 }
             }
             if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                if (this.sounds.walk.paused) {
+                if (this.sounds.walk.paused && this.world.soundEnabled) {
                     this.sounds.walk.play();
                 }
             } else {
@@ -129,8 +142,8 @@ class Character extends MovableObject {
             }
             this.world.camera_x = -this.x + 100;
         }, 1000 / 60);
-
         setInterval(() => {
+            if (!this.world) return;
             if (this.world.gameState != 'running') return;
             if (this.world.gameState == 'won') return;
             if (this.isDead()) {
@@ -139,12 +152,16 @@ class Character extends MovableObject {
                 this.playAnimation(this.IMAGES_JUNPING);
             } else if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURTING);
-                this.sounds.ouch.play();
+                if (this.world.soundEnabled) {
+                    this.sounds.ouch.play();
+                }
             } else if (this.isWaiting()) {
                 this.playAnimation(this.IMAGES_WAITING);
             } else if (this.isSleeping()) {
                 this.playAnimation(this.IMAGES_SLEEPING);
-                this.sounds.snoring.play();
+                if (this.world.soundEnabled) {
+                    this.sounds.snoring.play();
+                }
             } else {
                 this.sounds.snoring.pause();
                 if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {

@@ -12,14 +12,18 @@ let lostImg = document.getElementById('lostImg');
 let gameOverImg = document.getElementById('gameOverImg');
 let storyScreen = document.getElementById('gameStory');
 let winLostScreen = document.getElementById('winLostScreen');
+let overlay = document.getElementById('rotateDeviceOverlay');
 let thinkingBubble = document.getElementById('pepeThoughtBubble');
 let gameHeadline = document.getElementById('gameHeadline');
 let mobileButtons = document.getElementById('mobileControls');
+let soundBtn = document.getElementById('soundBtn');
 let startScreen_sound = new Audio('audio/intromusic.mp3');
 let gameStory_sound = new Audio('audio/gameStory.mp3');
 let gameOver_sound = new Audio('audio/gameOver.wav');
+let soundMuted = true;
 const deadChicken = 'img/3_enemies_chicken/chicken_normal/2_dead/dead.png';
 const normalChicken = 'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png';
+
 
 function checkMobile() {
     const mobile = window.innerWidth <= 900 || ('ontouchstart' in window);
@@ -32,21 +36,23 @@ function isMobile() {
 
 function startGame() {
     currentLevel = 1;
-    deactivateSounds();
     checkMobile();
-    setTimeout(() => {
-        thinkingBubble.classList.remove("hidden");
-    }, 1500);
+    setTimeout(() => thinkingBubble.classList.remove("hidden"), 1500);
     startScreen.classList.add('fade_out');
     setTimeout(() => {
         gameIsVisible();
         initGame();
+        if (soundMuted) {
+            muteAll();
+        } else {
+            handleGameAudio();
+        }
     }, 800);
 }
 
 function initGame() {
     canvas = document.getElementById("canvas");
-    if (!canvas) return; // Sicherheitscheck
+    if (!canvas) return;
     if (isMobile()) {
         resizeCanvas();
     } else {
@@ -62,6 +68,7 @@ function changeLevel() {
         pushCloudsIntoLevel();
         initLevel();
         world = new World(canvas, keyboard, level1);
+        world.soundEnabled = !soundMuted;
         world.character.hasStarted = true;
     }
     if (currentLevel == 2) {
@@ -69,6 +76,7 @@ function changeLevel() {
         pushCloudsIntoLevel2();
         initLevel2();
         world = new World(canvas, keyboard, level2);
+        world.soundEnabled = !soundMuted;
         world.character.hasStarted = true;
     }
     if (currentLevel == 3) {
@@ -76,17 +84,77 @@ function changeLevel() {
         pushCloudsIntoLevel3();
         initLevel3();
         world = new World(canvas, keyboard, level3);
+        world.soundEnabled = !soundMuted;
         world.character.hasStarted = true;
     }
 }
 
-function deactivateSounds() {
+function toggleSound() {
+    soundMuted = !soundMuted;
+    soundBtn.textContent = soundMuted ? "🔇" : "🔊";
+    soundBtn.blur();
+    if (soundMuted) {
+        muteAll();
+    } else {
+        unmuteAll();
+        if (isStoryOpen()) handleStoryAudio();
+        else if (isStartScreenOpen() || isOptionOpen()) handleStartScreenAudio();
+        else handleGameAudio();
+    }
+}
+
+function muteAll() {
+    startScreen_sound.pause();
+    gameStory_sound.pause();
+    gameOver_sound.pause();
+    gameOver_sound.currentTime = 0;
+    if (world) world.stopAllGameSounds();
+}
+
+function unmuteAll() {
+    startScreen_sound.volume = 1;
+    gameStory_sound.volume = 1;
+}
+
+function handleStoryAudio() {
+    gameStory_sound.currentTime = 0;
+    gameStory_sound.play();
+    startScreen_sound.volume = 0.3;
+    if (startScreen_sound.paused) startScreen_sound.play();
+}
+
+function handleStartScreenAudio() {
+    startScreen_sound.volume = 1;
+    startScreen_sound.play();
+}
+
+function handleGameAudio() {
     startScreen_sound.pause();
     startScreen_sound.currentTime = 0;
     gameStory_sound.pause();
     gameStory_sound.currentTime = 0;
-    if (world) {
-        world.stopAllGameSounds();
+    if (!soundMuted && world && world.resumeAllGameSounds) {
+        world.resumeAllGameSounds();
+    }
+}
+
+function isStoryOpen() {
+    return !storyScreen.classList.contains('display_none');
+}
+
+function isStartScreenOpen() {
+    return !startScreen.classList.contains('display_none');
+}
+
+function isOptionOpen() {
+    return !optionScreen.classList.contains('display_none');
+}
+
+function checkOrientation() {
+    if (window.innerHeight > window.innerWidth) {
+        overlay.classList.remove('hidden');
+    } else {
+        overlay.classList.add('hidden');
     }
 }
 
@@ -100,18 +168,31 @@ function gameIsVisible() {
 function openOption() {
     optionScreen.classList.remove('display_none');
     startScreen.classList.add('display_none');
+    if (soundMuted) {
+        muteAll();
+    } else {
+        handleStartScreenAudio();
+    }
 }
 
 function closeOption() {
     optionScreen.classList.add('display_none');
     startScreen.classList.remove('display_none');
+    if (soundMuted) {
+        muteAll();
+    } else {
+        handleStartScreenAudio();
+    }
 }
 
 function openStory() {
     storyScreen.classList.remove('display_none');
     startScreen.classList.add('display_none');
-    gameStory_sound.currentTime = 0;
-    gameStory_sound.play();
+    if (soundMuted) {
+        muteAll();
+    } else {
+        handleStoryAudio();
+    }
 }
 
 function closeStory() {
@@ -119,6 +200,7 @@ function closeStory() {
     startScreen.classList.remove('display_none');
     gameStory_sound.pause();
     gameStory_sound.currentTime = 0;
+    if (!soundMuted) handleStartScreenAudio();
 }
 
 function cursorControl() {
@@ -161,7 +243,6 @@ function hideScreen(screen1, screen2) {
 
 function openStartScreen() {
     hideScreen(startScreen, winLostScreen);
-    deactivateSounds();
     startScreen_sound.play();
     fullScreen.classList.add('display_none');
     checkMobile();
@@ -205,14 +286,6 @@ document.addEventListener("fullscreenchange", () => {
     }
 });
 
-function startIntroMusicOnce(e) {
-    if (e.target.id == "startBtn") return;
-    if (startScreen.classList.contains("display_none")) return;
-    startScreen_sound.loop = true;
-    startScreen_sound.play();
-    window.removeEventListener("click", startIntroMusicOnce);
-}
-
 function showWinScreen() {
     winLostScreen.classList.remove('display_none');
     winImg.classList.remove('display_none');
@@ -229,10 +302,10 @@ function showGameOverScreen() {
     winLostScreen.classList.remove('display_none');
     winImg.classList.add('display_none');
     gameOverImg.classList.remove('display_none');
-    gameOver_sound.play();
+    if (!soundMuted) {
+        gameOver_sound.play();
+    }
 }
-
-window.addEventListener("click", startIntroMusicOnce);
 
 window.addEventListener("keydown", (e) => {
     if (e.key == "ArrowLeft") keyboard.LEFT = true;
@@ -265,3 +338,9 @@ window.addEventListener("resize", () => {
     if (!canvas) return;
     resizeCanvas();
 });
+
+window.addEventListener("load", checkOrientation);
+
+window.addEventListener("resize", checkOrientation);
+
+window.addEventListener("orientationchange", checkOrientation);

@@ -17,6 +17,12 @@ class MovableObject extends DrawableObject {
     damageGiven = 10;
     knockbackForce = 5;
     stunDuration = 0;
+    offset = {
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0
+    }
     loot = {
         coins: 0,
         bottles: 0,
@@ -43,10 +49,21 @@ class MovableObject extends DrawableObject {
     }
 
     isColliding(obj) {
-        return this.x + this.width > obj.x - 10 &&
-            this.y + this.height > obj.y - 10 &&
-            this.x < obj.x + obj.width + 10 &&
-            this.y < obj.y + obj.height + 10;
+        if (obj.collidable == false) return false;
+        const thisOffset = this.offset || { top: 0, left: 0, right: 0, bottom: 0 };
+        const objOffset = obj.offset || { top: 0, left: 0, right: 0, bottom: 0 };
+        const thisLeft = this.x + thisOffset.left;
+        const thisRight = this.x + this.width - thisOffset.right;
+        const thisTop = this.y + thisOffset.top;
+        const thisBottom = this.y + this.height - thisOffset.bottom;
+        const objLeft = obj.x + objOffset.left;
+        const objRight = obj.x + obj.width - objOffset.right;
+        const objTop = obj.y + objOffset.top;
+        const objBottom = obj.y + obj.height - objOffset.bottom;
+        return thisRight > objLeft &&
+            thisLeft < objRight &&
+            thisBottom > objTop &&
+            thisTop < objBottom;
     }
 
     isJumpKill(obj) {
@@ -58,6 +75,7 @@ class MovableObject extends DrawableObject {
         this.energy -= 20;
         if (this.energy < 0) {
             this.energy = 0;
+            this.collidable = false
         } else {
             this.lastHit = new Date().getTime();
             this.lastAction = new Date().getTime();
@@ -182,6 +200,30 @@ class MovableObject extends DrawableObject {
         }
     }
 
+    mute() {
+        if (this.sounds) {
+            Object.values(this.sounds).forEach(sound => {
+                sound.pause();
+                sound.currentTime = 0;
+            });
+        }
+        if (this.sound) {
+            this.sound.pause();
+            this.sound.currentTime = 0;
+        }
+    }
+
+    unmute() {
+        if (this.sounds) {
+            Object.values(this.sounds).forEach(sound => {
+                sound.volume = 1;
+            });
+        }
+        if (this.sound) {
+            this.sound.volume = 1;
+        }
+    }
+
     stopSound() {
         if (this.sound) {
             this.sound.pause();
@@ -196,14 +238,11 @@ class MovableObject extends DrawableObject {
     }
 
     startChargeAttack() {
-        if (this.isCharging) return; // verhindert mehrfaches Auslösen
-
+        if (this.isCharging) return;
         this.isCharging = true;
-        this.speed = 4; // schneller Sprint
-
-        // Charge endet nach 1 Sekunde
+        this.speed = 4;
         setTimeout(() => {
-            this.speed = 0.5;   // normale Geschwindigkeit
+            this.speed = 0.5;
             this.isCharging = false;
         }, 1000);
     }
