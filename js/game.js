@@ -31,7 +31,7 @@ function checkMobile() {
 }
 
 function isMobile() {
-    return window.innerWidth <= 900 || ('ontouchstart' in window);
+    return window.innerWidth <= 900 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
 function startGame() {
@@ -53,11 +53,10 @@ function startGame() {
 function initGame() {
     canvas = document.getElementById("canvas");
     if (!canvas) return;
+    canvas.width = 720;
+    canvas.height = 480;
     if (isMobile()) {
         resizeCanvas();
-    } else {
-        canvas.width = 720;
-        canvas.height = 480;
     }
     changeLevel();
 }
@@ -204,6 +203,10 @@ function closeStory() {
 }
 
 function cursorControl() {
+    if (isMobile()) {
+        cursor.style.display = "none";
+        return;
+    }
     document.addEventListener('mousemove', e => {
         cursor.style.left = e.clientX - cursor.offsetWidth / 2 + 'px';
         cursor.style.top = e.clientY - cursor.offsetHeight / 2 + 'px';
@@ -228,8 +231,8 @@ function cursorControl() {
 function resizeCanvas() {
     const wrapper = document.querySelector('.canvas_wrapper');
     const rect = wrapper.getBoundingClientRect();
-    canvas.width = rect.width;
-    canvas.height = rect.height;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
     if (world) {
         world.canvas = canvas;
         world.ctx = canvas.getContext('2d');
