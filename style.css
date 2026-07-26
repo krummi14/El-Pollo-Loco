@@ -42,7 +42,7 @@ body::before {
     position: fixed;
     pointer-events: none;
     transition: transform 0.15s ease;
-    z-index: 9999;
+    z-index: 10;
 }
 
 .cursorImg {
@@ -113,7 +113,6 @@ canvas {
     width: 100vw;
     height: calc(100vh - 120px);
     max-height: calc(100vh - 120px);
-    overflow: hidden;
 }
 
 /*----- Start Screen -----*/
@@ -129,7 +128,6 @@ canvas {
     align-items: center;
     background: url('img/9_intro_outro_screens/start/startscreen_2.png') center center / cover no-repeat;
     padding: 40px;
-    overflow: hidden;
 }
 
 .generally_btn {
@@ -242,7 +240,6 @@ canvas {
 .fullscreen {
     position: fixed;
     inset: 0;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -402,9 +399,8 @@ canvas {
     gap: clamp(24px, 6vh, 80px);
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(4px);
-    z-index: 9999;
+    z-index: 5;
     animation: fadeIn 1s ease forwards;
-    overflow: hidden;
 }
 
 .win_image,
@@ -472,7 +468,7 @@ canvas {
     font-size: 18px;
     color: #000;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    z-index: 9999;
+    z-index: 5;
     animation: bubbleFadeIn 0.8s ease-out;
 }
 
@@ -545,7 +541,7 @@ canvas {
     align-items: center;
     padding: clamp(8px, 2vh, 20px);
     gap: clamp(12px, 3vw, 32px);
-    z-index: 9999;
+    z-index: 20;
 }
 
 .left_right,
@@ -600,6 +596,10 @@ canvas {
 }
 
 @media (max-width:900px) {
+    #cursor {
+        display: none !important;
+    }
+
     .canvas_wrapper {
         width: 100%;
         height: auto;

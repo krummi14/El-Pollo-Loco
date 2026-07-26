@@ -202,26 +202,37 @@ function closeStory() {
     if (!soundMuted) handleStartScreenAudio();
 }
 
+function cursorMoveHandler(e) {
+    cursor.style.left = e.clientX - cursor.offsetWidth / 2 + 'px';
+    cursor.style.top = e.clientY - cursor.offsetHeight / 2 + 'px';
+}
+
+function cursorDownHandler() {
+    cursor.style.transform = 'scale(1.3)';
+}
+
+function cursorUpHandler() {
+    cursor.style.transform = 'scale(1)';
+}
+
 function cursorControl() {
     if (isMobile()) {
         cursor.style.display = "none";
+        cursorImg.src = "";
+        document.removeEventListener('mousemove', cursorMoveHandler);
+        document.removeEventListener('mousedown', cursorDownHandler);
+        document.removeEventListener('mouseup', cursorUpHandler);
         return;
     }
-    document.addEventListener('mousemove', e => {
-        cursor.style.left = e.clientX - cursor.offsetWidth / 2 + 'px';
-        cursor.style.top = e.clientY - cursor.offsetHeight / 2 + 'px';
-    });
-    document.addEventListener('mousedown', () => {
-        cursor.style.transform = 'scale(1.3)';
-    });
-    document.addEventListener('mouseup', () => {
-        cursor.style.transform = 'scale(1)';
-    });
+    cursor.style.display = "block";
+    cursorImg.src = normalChicken;
+    document.addEventListener('mousemove', cursorMoveHandler);
+    document.addEventListener('mousedown', cursorDownHandler);
+    document.addEventListener('mouseup', cursorUpHandler);
     document.querySelectorAll('.kill_btn').forEach(btn => {
         btn.addEventListener('mouseenter', () => {
             cursorImg.src = deadChicken;
         });
-
         btn.addEventListener('mouseleave', () => {
             cursorImg.src = normalChicken;
         });
