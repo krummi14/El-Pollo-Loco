@@ -65,7 +65,7 @@ class Character extends MovableObject {
     snoring_sound = new Audio('audio/snoring_man.mp3');
     ouch_sound = new Audio('audio/ouch.wav');
     jumping_sound = new Audio('audio/jump.wav');
-    walking_sound = new Audio('audio/walking.wav');
+    walking_sound = new Audio('audio/walking.mp3');
     isStunned = false;
 
     constructor() {

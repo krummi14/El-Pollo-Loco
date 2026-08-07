@@ -39,7 +39,7 @@ class Endboss extends MovableObject {
         'img/4_enemie_boss_chicken/3_attack/G19.png',
         'img/4_enemie_boss_chicken/3_attack/G20.png'
     ]
-    endboss_sound = new Audio('audio/endboss.wav');
+    endboss_sound = new Audio('audio/endboss.mp3');
 
     constructor() {
         super().loadImage('img/4_enemie_boss_chicken/2_alert/G5.png');

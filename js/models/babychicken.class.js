@@ -10,7 +10,7 @@ class Babychicken extends MovableObject {
     IMAGE_DEAD = [
         'img/3_enemies_chicken/chicken_small/2_dead/dead.png'
     ];
-    babyChicken_sound = new Audio('audio/babychicken.wav');
+    babyChicken_sound = new Audio('audio/babychicken.mp3');
     direction = 'left';
 
     constructor() {
