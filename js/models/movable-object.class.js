@@ -17,6 +17,7 @@ class MovableObject extends DrawableObject {
     damageGiven = 10;
     knockbackForce = 5;
     stunDuration = 0;
+    groundY = 140;
     offset = {
         top: 0,
         left: 0,
@@ -36,16 +37,20 @@ class MovableObject extends DrawableObject {
             if (this.isAboveGround() || this.speedY > 0) {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration;
+                if (this.y > this.groundY) {
+                    this.y = this.groundY;
+                    this.speedY = 0;
+                    this.jumps = false;
+                }
             }
-        }, 1000 / 25);
+        }, 1000 / 40);
     }
 
     isAboveGround() {
-        if (this instanceof ThrowableObject) { //ThrowableObjects should always fall
+        if (this instanceof ThrowableObject) {
             return true;
-        } else {
-            return this.y < 139;
         }
+        return this.y < this.groundY;
     }
 
     isColliding(obj) {
@@ -68,18 +73,19 @@ class MovableObject extends DrawableObject {
 
     isJumpKill(obj) {
         return this.speedY < 0 &&
-            this.y + this.height <= obj.y + obj.height * 0.95;
+            this.y + this.height - 20 < obj.y + obj.height / 2;
     }
 
-    hit() {
-        this.energy -= 20;
-        if (this.energy < 0) {
+    hit(damage = 20) {
+        this.energy -= damage;
+
+        if (this.energy <= 0) {
             this.energy = 0;
-            this.collidable = false
-        } else {
-            this.lastHit = new Date().getTime();
-            this.lastAction = new Date().getTime();
+            this.collidable = false;
         }
+
+        this.lastHit = Date.now();
+        this.lastAction = Date.now();
     }
 
     isDead() {

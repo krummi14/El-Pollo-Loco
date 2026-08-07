@@ -20,7 +20,7 @@ let soundBtn = document.getElementById('soundBtn');
 let startScreen_sound = new Audio('audio/intromusic.mp3');
 let gameStory_sound = new Audio('audio/gameStory.mp3');
 let gameOver_sound = new Audio('audio/gameOver.wav');
-let soundMuted = true;
+let soundMuted = JSON.parse(localStorage.getItem("soundMuted")) ?? true;;
 const deadChicken = 'img/3_enemies_chicken/chicken_normal/2_dead/dead.png';
 const normalChicken = 'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png';
 
@@ -37,6 +37,7 @@ function isMobile() {
 function startGame() {
     currentLevel = 1;
     checkMobile();
+    hideGameCursor();
     setTimeout(() => thinkingBubble.classList.remove("hidden"), 1500);
     startScreen.classList.add('fade_out');
     setTimeout(() => {
@@ -55,9 +56,6 @@ function initGame() {
     if (!canvas) return;
     canvas.width = 720;
     canvas.height = 480;
-    if (isMobile()) {
-        resizeCanvas();
-    }
     changeLevel();
 }
 
@@ -90,6 +88,7 @@ function changeLevel() {
 
 function toggleSound() {
     soundMuted = !soundMuted;
+    localStorage.setItem("soundMuted", JSON.stringify(soundMuted));
     soundBtn.textContent = soundMuted ? "🔇" : "🔊";
     soundBtn.blur();
     if (soundMuted) {
@@ -240,15 +239,16 @@ function cursorControl() {
 }
 
 function resizeCanvas() {
-    const wrapper = document.querySelector('.canvas_wrapper');
-    const rect = wrapper.getBoundingClientRect();
-    canvas.style.width = rect.width + 'px';
-    canvas.style.height = rect.height + 'px';
-    if (world) {
-        world.canvas = canvas;
-        world.ctx = canvas.getContext('2d');
+    const wrapper = document.querySelector(".canvas_wrapper");
+    if (document.fullscreenElement) {
+        wrapper.style.width = window.innerWidth + "px";
+        wrapper.style.height = window.innerHeight + "px";
+    } else {
+        wrapper.style.width = "720px";
+        wrapper.style.height = "480px";
     }
 }
+
 
 function hideScreen(screen1, screen2) {
     screen1.classList.remove('display_none');
@@ -293,6 +293,7 @@ function closeFullscreen() {
 }
 
 document.addEventListener("fullscreenchange", () => {
+    resizeCanvas();
     if (document.fullscreenElement) {
         gameHeadline.classList.add('display_none');
     } else {
@@ -319,6 +320,11 @@ function showGameOverScreen() {
     if (!soundMuted) {
         gameOver_sound.play();
     }
+}
+
+function hideGameCursor() {
+    cursor.style.left = "-100px";
+    cursor.style.top = "-100px";
 }
 
 window.addEventListener("keydown", (e) => {
@@ -358,3 +364,14 @@ window.addEventListener("load", checkOrientation);
 window.addEventListener("resize", checkOrientation);
 
 window.addEventListener("orientationchange", checkOrientation);
+
+window.addEventListener("load", () => {
+    soundBtn.textContent = soundMuted ? "🔇" : "🔊";
+    if (!soundMuted && isStartScreenOpen()) {
+        handleStartScreenAudio();
+    }
+});
+
+document.getElementById("canvas").addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+});

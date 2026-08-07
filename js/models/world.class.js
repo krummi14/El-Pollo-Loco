@@ -50,7 +50,7 @@ class World {
             this.checkLost();
             this.checkGameOver();
             this.convertDeadChickensToCoins();
-        }, 200);
+        }, 1000 / 60);
     }
 
     checkWonAgainstEndboss() {
@@ -94,7 +94,7 @@ class World {
     checkJumpKill(enemy) {
         if (enemy instanceof Chicken || enemy instanceof Babychicken) {
             if (this.character.isJumpKill(enemy)) {
-                enemy.hit();
+                enemy.hit(100);
                 if (enemy.isDead()) {
                     enemy.startCoinConversion();
                 }
@@ -106,8 +106,8 @@ class World {
     }
 
     checkIfNoJumpKill(enemy) {
-        this.character.hit();
-        this.character.energy -= enemy.damageGiven;
+        if (this.character.isHurt()) return;
+        this.character.hit(enemy.damageGiven);
         if (this.character.energy < 0) this.character.energy = 0;
         this.statusBarHealth.setPercentage(this.character.energy);
         this.character.applyKnockback(enemy.knockbackForce, enemy.x);
@@ -337,7 +337,9 @@ class World {
 
     drawBackgrounds() {
         this.level.backgroundObjects.forEach(bg => {
-            const offsetX = this.camera_x * bg.parallaxFactor;
+            const offsetX = Math.round(
+                this.camera_x * bg.parallaxFactor
+            );
             this.ctx.save();
             this.ctx.translate(offsetX, 0);
             this.addToMap(bg);
