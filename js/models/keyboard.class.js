@@ -1,3 +1,6 @@
+/**
+ * Stores the current state of all keyboard controls used by the game.
+ */
 class Keyboard {
     LEFT = false;
     RIGHT = false;
@@ -8,6 +11,11 @@ class Keyboard {
     F = false;
 }
 
+/**
+ * Initializes the mobile control buttons and connects their touch events
+ * to the corresponding keyboard states.
+ * @param {Keyboard} keyboard - The keyboard object whose control states are updated.
+ */
 function initMobileControls(keyboard) {
     const btnLeft = document.getElementById("btnLeft");
     const btnRight = document.getElementById("btnRight");

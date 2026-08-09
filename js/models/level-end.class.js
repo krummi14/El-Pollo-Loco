@@ -10,6 +10,10 @@ class LevelEnd extends MovableObject {
         'img/6_salsa_bottle/bottle_rotation/bottle_splash/4_bottle_splash.png'
     ];
 
+    /**
+     * Initializes the level exit with its images, position,
+     * dimensions and opening state.
+     */
     constructor() {
         super();
         this.loadImage('img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png');
@@ -22,8 +26,12 @@ class LevelEnd extends MovableObject {
         this.isOpen = false;
         this.isFullyOpen = false;
         this.canBeOpened = false;
-    }   
+    }
 
+    /**
+    * Opens the level exit by playing the opening animation
+    * and marks the exit as fully open after the animation.
+    */
     open() {
         this.isOpen = true;
         this.playAnimation(this.IMAGES_OPENING);

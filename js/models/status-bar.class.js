@@ -1,3 +1,7 @@
+/**
+ * Represents a status bar used to display health, coins, bottles
+ * or the Endboss energy on the game screen.
+ */
 class Statusbar extends DrawableObject {
     IMAGES_HEALTH = [
         'img/7_statusbars/1_statusbar/2_statusbar_health/green/0.png',
@@ -34,6 +38,11 @@ class Statusbar extends DrawableObject {
     percentage = 100;
     IMAGES;
 
+    /**
+     * Creates a new status bar and initializes its position,
+     * size, images and starting percentage.
+     * @param {string} type - The type of status bar to create.
+     */
     constructor(type) {
         super();
         this.positionOfStatusbars(type);
@@ -43,6 +52,11 @@ class Statusbar extends DrawableObject {
         this.setVolumeOfStatusbar(type)
     }
 
+    /**
+    * Selects the correct image set and screen position
+    * based on the type of status bar.
+    * @param {string} type - The type of status bar.
+    */
     positionOfStatusbars(type) {
         if (type == 'bottle') {
             this.IMAGES = this.IMAGES_BOTTLE;
@@ -63,6 +77,10 @@ class Statusbar extends DrawableObject {
         }
     }
 
+    /**
+     * Sets the initial percentage value according to the status bar type.
+     * @param {string} type - The type of status bar.
+     */
     setVolumeOfStatusbar(type) {
         if (type == 'bottle') {
             this.setPercentage(0);
@@ -75,12 +93,21 @@ class Statusbar extends DrawableObject {
         }
     }
 
+    /**
+     * Updates the status bar percentage and selects the corresponding image.
+     * @param {number} percentage - The current percentage value of the status bar.
+     */
     setPercentage(percentage) {
         this.percentage = percentage; // => 0 ... 5
         let imagepath = this.IMAGES[this.resolveImageIndex()];
         this.img = this.imageCache[imagepath];
     }
 
+    /**
+     * Determines which status bar image should be displayed
+     * based on the current percentage.
+     * @returns {number} The index of the image matching the percentage.
+     */
     resolveImageIndex() {
         if (this.percentage == 100) {
             return 5;

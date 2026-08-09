@@ -1,6 +1,6 @@
 let canvas;
 let world;
-let currentLevel = 1;
+let currentLevel = 3;
 let keyboard = new Keyboard();
 let startScreen = document.getElementById('startScreen');
 let fullScreen = document.getElementById('fullscreen');
@@ -24,18 +24,28 @@ let soundMuted = JSON.parse(localStorage.getItem("soundMuted")) ?? true;;
 const deadChicken = 'img/3_enemies_chicken/chicken_normal/2_dead/dead.png';
 const normalChicken = 'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png';
 
-
+/**
+ * Checks whether the current device should display mobile controls.
+ */
 function checkMobile() {
     const mobile = window.innerWidth <= 900 || ('ontouchstart' in window);
     mobileButtons.classList.toggle("display_none", !mobile);
 }
 
+/**
+ * Checks whether the current device is a mobile device.
+ *
+ * @returns {boolean} True if the device is identified as mobile.
+ */
 function isMobile() {
     return window.innerWidth <= 900 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
+/**
+ * Starts the game and prepares the game interface and audio.
+ */
 function startGame() {
-    currentLevel = 1;
+    currentLevel = 3;
     checkMobile();
     hideGameCursor();
     setTimeout(() => thinkingBubble.classList.remove("hidden"), 1500);
@@ -51,6 +61,9 @@ function startGame() {
     }, 800);
 }
 
+/**
+ * Initializes the game canvas and loads the current level.
+ */
 function initGame() {
     canvas = document.getElementById("canvas");
     if (!canvas) return;
@@ -59,6 +72,9 @@ function initGame() {
     changeLevel();
 }
 
+/**
+ * Loads and initializes the currently selected game level.
+ */
 function changeLevel() {
     if (currentLevel == 1) {
         resetLevel1();
@@ -86,6 +102,9 @@ function changeLevel() {
     }
 }
 
+/**
+ * Toggles the game's sound state and updates the sound button.
+ */
 function toggleSound() {
     soundMuted = !soundMuted;
     localStorage.setItem("soundMuted", JSON.stringify(soundMuted));
@@ -101,6 +120,9 @@ function toggleSound() {
     }
 }
 
+/**
+ * Pauses all active game and interface sounds.
+ */
 function muteAll() {
     startScreen_sound.pause();
     gameStory_sound.pause();
@@ -109,11 +131,17 @@ function muteAll() {
     if (world) world.stopAllGameSounds();
 }
 
+/**
+ * Restores the default volume of interface sounds.
+ */
 function unmuteAll() {
     startScreen_sound.volume = 1;
     gameStory_sound.volume = 1;
 }
 
+/**
+ * Starts the story audio and reduces the volume of the start screen audio.
+ */
 function handleStoryAudio() {
     gameStory_sound.currentTime = 0;
     gameStory_sound.play();
@@ -121,11 +149,17 @@ function handleStoryAudio() {
     if (startScreen_sound.paused) startScreen_sound.play();
 }
 
+/**
+ * Starts the audio for the start screen.
+ */
 function handleStartScreenAudio() {
     startScreen_sound.volume = 1;
     startScreen_sound.play();
 }
 
+/**
+ * Switches from menu audio to game audio.
+ */
 function handleGameAudio() {
     startScreen_sound.pause();
     startScreen_sound.currentTime = 0;
@@ -136,18 +170,36 @@ function handleGameAudio() {
     }
 }
 
+/**
+ * Checks whether the story screen is currently open.
+ *
+ * @returns {boolean} True if the story screen is visible.
+ */
 function isStoryOpen() {
     return !storyScreen.classList.contains('display_none');
 }
 
+/**
+ * Checks whether the start screen is currently open.
+ *
+ * @returns {boolean} True if the start screen is visible.
+ */
 function isStartScreenOpen() {
     return !startScreen.classList.contains('display_none');
 }
 
+/**
+ * Checks whether the options screen is currently open.
+ *
+ * @returns {boolean} True if the options screen is visible.
+ */
 function isOptionOpen() {
     return !optionScreen.classList.contains('display_none');
 }
 
+/**
+ * Checks the device orientation and displays the rotation overlay if needed.
+ */
 function checkOrientation() {
     if (window.innerHeight > window.innerWidth) {
         overlay.classList.remove('hidden');
@@ -156,6 +208,9 @@ function checkOrientation() {
     }
 }
 
+/**
+ * Makes the game screen visible and hides the start and result screens.
+ */
 function gameIsVisible() {
     startScreen.classList.add('display_none');
     fullScreen.classList.remove('display_none');
@@ -163,6 +218,9 @@ function gameIsVisible() {
     winLostScreen.classList.add('display_none');
 }
 
+/**
+ * Opens the options screen and hides the start screen.
+ */
 function openOption() {
     optionScreen.classList.remove('display_none');
     startScreen.classList.add('display_none');
@@ -173,6 +231,9 @@ function openOption() {
     }
 }
 
+/**
+ * Closes the options screen and returns to the start screen.
+ */
 function closeOption() {
     optionScreen.classList.add('display_none');
     startScreen.classList.remove('display_none');
@@ -183,6 +244,9 @@ function closeOption() {
     }
 }
 
+/**
+ * Opens the story screen and hides the start screen.
+ */
 function openStory() {
     storyScreen.classList.remove('display_none');
     startScreen.classList.add('display_none');
@@ -193,6 +257,9 @@ function openStory() {
     }
 }
 
+/**
+ * Closes the story screen and returns to the start screen.
+ */
 function closeStory() {
     storyScreen.classList.add('display_none');
     startScreen.classList.remove('display_none');
@@ -201,19 +268,33 @@ function closeStory() {
     if (!soundMuted) handleStartScreenAudio();
 }
 
+/**
+ * Updates the position of the custom cursor based on the mouse position.
+ *
+ * @param {MouseEvent} e - The current mouse event.
+ */
 function cursorMoveHandler(e) {
     cursor.style.left = e.clientX - cursor.offsetWidth / 2 + 'px';
     cursor.style.top = e.clientY - cursor.offsetHeight / 2 + 'px';
 }
 
+/**
+ * Enlarges the custom cursor while the mouse button is pressed.
+ */
 function cursorDownHandler() {
     cursor.style.transform = 'scale(1.3)';
 }
 
+/**
+ * Restores the normal size of the custom cursor.
+ */
 function cursorUpHandler() {
     cursor.style.transform = 'scale(1)';
 }
 
+/**
+ * Enables or disables the custom cursor depending on the device type.
+ */
 function cursorControl() {
     if (isMobile()) {
         cursor.style.display = "none";
@@ -238,6 +319,9 @@ function cursorControl() {
     });
 }
 
+/**
+ * Adjusts the canvas wrapper size according to the fullscreen state.
+ */
 function resizeCanvas() {
     const wrapper = document.querySelector(".canvas_wrapper");
     if (document.fullscreenElement) {
@@ -249,19 +333,29 @@ function resizeCanvas() {
     }
 }
 
-
+/**
+ * Hides one screen and displays another screen.
+ *
+ * @param {HTMLElement} screen1 - Screen that should become visible.
+ * @param {HTMLElement} screen2 - Screen that should be hidden.
+ */
 function hideScreen(screen1, screen2) {
     screen1.classList.remove('display_none');
     screen2.classList.add('display_none');
 }
 
+/**
+ * Opens the start screen and hides the game result screen.
+ */
 function openStartScreen() {
     hideScreen(startScreen, winLostScreen);
-    startScreen_sound.play();
     fullScreen.classList.add('display_none');
     checkMobile();
 }
 
+/**
+ * Toggles fullscreen mode for the game.
+ */
 function toggleFullscreen() {
     if (!document.fullscreenElement) {
         openFullscreen(fullScreen);
@@ -272,6 +366,11 @@ function toggleFullscreen() {
     }
 }
 
+/**
+ * Requests fullscreen mode for the given element.
+ *
+ * @param {HTMLElement} elem - Element that should enter fullscreen mode.
+ */
 function openFullscreen(elem) {
     if (elem.requestFullscreen) {
         elem.requestFullscreen();
@@ -282,6 +381,9 @@ function openFullscreen(elem) {
     }
 }
 
+/**
+ * Exits fullscreen mode using the browser's supported API.
+ */
 function closeFullscreen() {
     if (document.exitFullscreen) {
         document.exitFullscreen();
@@ -292,6 +394,9 @@ function closeFullscreen() {
     }
 }
 
+/**
+ * Updates the canvas size and game headline when fullscreen mode changes.
+ */
 document.addEventListener("fullscreenchange", () => {
     resizeCanvas();
     if (document.fullscreenElement) {
@@ -301,18 +406,27 @@ document.addEventListener("fullscreenchange", () => {
     }
 });
 
+/**
+ * Displays the win screen and hides the lost screen.
+ */
 function showWinScreen() {
     winLostScreen.classList.remove('display_none');
     winImg.classList.remove('display_none');
     lostImg.classList.add('display_none');
 }
 
+/**
+ * Displays the lost screen and hides the win screen.
+ */
 function showLostScreen() {
     winLostScreen.classList.remove('display_none');
     winImg.classList.add('display_none');
     lostImg.classList.remove('display_none');
 }
 
+/**
+ * Displays the game over screen and plays the game over sound if enabled.
+ */
 function showGameOverScreen() {
     winLostScreen.classList.remove('display_none');
     winImg.classList.add('display_none');
@@ -322,6 +436,9 @@ function showGameOverScreen() {
     }
 }
 
+/**
+ * Moves the custom cursor outside the visible game area.
+ */
 function hideGameCursor() {
     cursor.style.left = "-100px";
     cursor.style.top = "-100px";

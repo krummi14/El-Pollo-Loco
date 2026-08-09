@@ -1,3 +1,7 @@
+/**
+ * Represents a game level and contains all enemies, clouds,
+ * background objects, collectibles and level boundaries.
+ */
 class Level {
     enemies;
     clouds;
@@ -7,6 +11,14 @@ class Level {
     level_start_x = 100;
     requiredCoins = 5;
 
+    /**
+     * Creates a new level with its game objects and initializes the background.
+     * @param {MovableObject[]} enemies - Enemies contained in the level.
+     * @param {Cloud[]} clouds - Clouds contained in the level.
+     * @param {Collectible[]} collectibles - Collectible items in the level.
+     * @param {LevelEnd} levelEnd - The exit object of the level.
+     * @param {number} levelStart - The starting position of the level.
+     */
     constructor(enemies, clouds, collectibles, levelEnd, levelStart) {
         this.enemies = enemies;
         this.clouds = clouds;
@@ -18,6 +30,10 @@ class Level {
         this.safeNumberOfCurrentCoins();
     }
 
+    /**
+    * Creates and adds the background layers with different
+    * parallax factors to create a scrolling depth effect.
+    */
     createBackground() {
         for (let i = -1; i < 4; i++) {
             this.backgroundObjects.push(
@@ -29,6 +45,10 @@ class Level {
         }
     }
 
+    /**
+     * Calculates the total number of coins available from enemy loot.
+     * Stores the result for use when checking level requirements.
+     */
     safeNumberOfCurrentCoins() {
         this.totalCoins = this.enemies.reduce((sum, enemy) => {
             return sum + enemy.loot.coins;

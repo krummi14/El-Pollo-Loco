@@ -13,6 +13,10 @@ class Babychicken extends MovableObject {
     babyChicken_sound = new Audio('audio/babychicken.mp3');
     direction = 'left';
 
+    /**
+    * Initializes the baby chicken with its images, movement values,
+    * collision data, loot configuration and initial movement direction.
+    */
     constructor() {
         super().loadImage('img/3_enemies_chicken/chicken_small/1_walk/1_w.png');
         this.loadImages(this.IMAGES_WALKING);
@@ -41,6 +45,10 @@ class Babychicken extends MovableObject {
         this.animateBabychicken();
     }
 
+    /**
+    * Controls the baby chicken's movement, random direction changes,
+    * jumping behavior, sound effects and coin conversion after death.
+    */
     animateBabychicken() {
         setInterval(() => {
             if (!this.isDead() && !this.hasPlayedSound && this.isVisible() && this.world.soundEnabled) {

@@ -1,3 +1,7 @@
+/**
+ * Represents the game world and controls the game logic, rendering,
+ * collisions, collectibles, level progression and game states.
+ */
 class World {
     character = new Character();
     ctx;
@@ -12,7 +16,14 @@ class World {
     hintMessage = "";
     gameState = 'running';
     soundEnabled = true;
+    throwCooldown = false;
 
+    /**
+     * Initializes the game world with the canvas, keyboard and current level.
+     * @param {HTMLCanvasElement} canvas - The canvas used to render the game.
+     * @param {Keyboard} keyboard - The keyboard input handler.
+     * @param {Level} level - The current game level.
+     */
     constructor(canvas, keyboard, level) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
@@ -26,6 +37,10 @@ class World {
         this.run();
     }
 
+    /**
+     * Connects the character and all enemies with the current game world.
+     * Identifies the Endboss if the current level contains one.
+     */
     setWorld() {
         this.endboss = null;
         this.character.world = this;
@@ -38,11 +53,15 @@ class World {
         });
     }
 
+    /**
+     * Starts the main game loop and repeatedly checks all
+     * important game events and interactions.
+     */
     run() {
         this.intervalId = setInterval(() => {
             this.checkCollisions();
             this.checkWonAgainstEndboss();
-            this.ceckThrowObjects();
+            this.checkThrowObjects();
             this.checkCrossingItem();
             this.checkLevelEnd();
             this.checkGateOpenByPlayer();
@@ -53,16 +72,17 @@ class World {
         }, 1000 / 60);
     }
 
-    checkWonAgainstEndboss() {
-        if (this.endboss && this.endboss.energy <= 0 && this.gameState == 'running') {
-            this.gameState = 'won';
-            this.stopAllGameSounds();
-            showWinScreen();
-        }
-    }
-
-    ceckThrowObjects() {
-        if (this.keyboard.D && this.character.bottles > 0) {
+    /**
+     * Checks whether the character can throw a bottle.
+     * Creates and launches a new throwable object if possible.
+     */
+    checkThrowObjects() {
+        if (
+            this.keyboard.D &&
+            this.character.bottles > 0 &&
+            !this.throwCooldown
+        ) {
+            this.throwCooldown = true;
             this.character.bottles--;
             this.statusBarBottle.setPercentage(this.character.bottles * 20);
             let direction = this.character.otherDirection ? 1 : -1;
@@ -73,24 +93,45 @@ class World {
             );
             bottle.world = this;
             this.throwableObjects.push(bottle);
+            setTimeout(() => {
+                this.throwCooldown = false;
+            }, 300);
         }
     }
 
+    /**
+     * Checks all collisions between the character, enemies and bottles.
+     */
     checkCollisions() {
         this.betweenCharacterAndEnemies();
-        this.betweenEndbossAndBottle();
-        this.betweenChickenAndBottle();
+        this.betweenEnemiesAndBottle();
     }
 
+    /**
+     * Checks collisions between the character and all enemies.
+     * Handles jump attacks and regular enemy attacks.
+     */
     betweenCharacterAndEnemies() {
-        this.level.enemies.forEach((enemy) => {
-            if (enemy.energy <= 0) return;
-            if (!this.character.isColliding(enemy)) return;
-            if (this.checkJumpKill(enemy)) return;
+        for (let enemy of this.level.enemies) {
+            if (enemy.energy <= 0) continue;
+            if (!this.character.isColliding(enemy)) continue;
+            if (this.checkJumpKill(enemy)) {
+                return;
+            }
+        }
+        for (let enemy of this.level.enemies) {
+            if (enemy.energy <= 0) continue;
+            if (!this.character.isColliding(enemy)) continue;
             this.checkIfNoJumpKill(enemy);
-        });
+            return;
+        }
     }
 
+    /**
+     * Checks whether an enemy is defeated by jumping on it.
+     * @param {MovableObject} enemy - The enemy involved in the collision.
+     * @returns {boolean} True if the enemy was defeated by a jump attack.
+     */
     checkJumpKill(enemy) {
         if (enemy instanceof Chicken || enemy instanceof Babychicken) {
             if (this.character.isJumpKill(enemy)) {
@@ -105,6 +146,11 @@ class World {
         return false;
     }
 
+    /**
+     * Applies damage to the character when a collision is not a jump kill.
+     * Also applies knockback, stun and updates the health status bar.
+     * @param {MovableObject} enemy - The enemy that damages the character.
+     */
     checkIfNoJumpKill(enemy) {
         if (this.character.isHurt()) return;
         this.character.hit(enemy.damageGiven);
@@ -117,23 +163,27 @@ class World {
         }
     }
 
-    betweenEndbossAndBottle() {
-        this.throwableObjects.forEach((bottle, bottleIndex) => {
-            this.level.enemies.forEach(enemy => {
-                if (enemy instanceof Endboss && bottle.isColliding(enemy)) {
-                    enemy.hit();
+    /**
+  * Checks collisions between thrown bottles and enemies.
+  * Applies damage and triggers the appropriate bottle splash effect.
+  * The endboss cannot be hit by bottles while performing a charge attack.
+  */
+    betweenEnemiesAndBottle() {
+        this.throwableObjects.forEach((bottle) => {
+            if (bottle.isSplashed) return;
+            this.level.enemies.forEach((enemy) => {
+                if (bottle.isSplashed) return;
+                if (enemy instanceof Endboss && enemy.isCharging) {
+                    return;
+                }
+                if (!bottle.isColliding(enemy)) return;
+                if (enemy instanceof Endboss) {
+                    enemy.hit(20);
                     this.statusBarEndboss.setPercentage(enemy.energy);
                     bottle.splash();
+                    return;
                 }
-            });
-        });
-    }
-
-    betweenChickenAndBottle() {
-        this.throwableObjects.forEach((bottle) => {
-            this.level.enemies.forEach(enemy => {
-                if ((enemy instanceof Chicken || enemy instanceof Babychicken) &&
-                    bottle.isColliding(enemy)) {
+                if (enemy instanceof Chicken || enemy instanceof Babychicken) {
                     enemy.hit();
                     if (enemy.isDead()) {
                         enemy.isConvertedToCoin = true;
@@ -145,6 +195,10 @@ class World {
         });
     }
 
+    /**
+     * Checks whether the character collects a coin or bottle.
+     * Updates the corresponding inventory and status bar.
+     */
     checkCrossingItem() {
         this.collectibles.forEach((item, index) => {
             if (this.character.isColliding(item)) {
@@ -160,6 +214,10 @@ class World {
         });
     }
 
+    /**
+     * Checks whether the character has reached the end of the level.
+     * Displays a message depending on the number of collected coins.
+     */
     checkLevelEnd() {
         if (!this.levelEnd) return;
         if (!this.character.isNearLevelEnd()) {
@@ -174,6 +232,10 @@ class World {
         }
     }
 
+    /**
+     * Checks whether the character has reached the opened level exit.
+     * Starts the next level if the exit has been reached.
+     */
     checkIfCharacterReachedExit() {
         if (!this.levelEnd) return;
         if (this.levelEnd.isFullyOpen && this.character.x > this.levelEnd.x - 50) {
@@ -181,6 +243,9 @@ class World {
         }
     }
 
+    /**
+     * Checks whether the player can open the level exit by pressing F.
+     */
     checkGateOpenByPlayer() {
         if (!this.levelEnd) return;
         if (
@@ -194,6 +259,10 @@ class World {
         }
     }
 
+    /**
+     * Checks whether the Endboss has been defeated.
+     * Changes the game state and displays the win screen if necessary.
+     */
     checkWonAgainstEndboss() {
         if (this.endboss && this.endboss.energy <= 0 && this.gameState == 'running') {
             this.gameState = 'won';
@@ -202,6 +271,10 @@ class World {
         }
     }
 
+    /**
+     * Checks whether the character has lost while the Endboss is still alive.
+     * Changes the game state and displays the lost screen if necessary.
+     */
     checkLost() {
         if (this.gameState == 'running' &&
             this.character.energy <= 0 &&
@@ -214,6 +287,10 @@ class World {
         }
     }
 
+    /**
+     * Checks whether the character has lost all health without an active Endboss.
+     * Changes the game state and displays the game-over screen if necessary.
+     */
     checkGameOver() {
         if (this.gameState == 'running' &&
             this.character.energy <= 0 &&
@@ -225,6 +302,10 @@ class World {
         }
     }
 
+    /**
+     * Converts defeated chickens into collectible coins and bottles.
+     * Removes converted chickens from the enemy list.
+     */
     convertDeadChickensToCoins() {
         for (let i = this.level.enemies.length - 1; i >= 0; i--) {
             let enemy = this.level.enemies[i];
@@ -236,6 +317,10 @@ class World {
         }
     }
 
+    /**
+     * Creates collectible coins based on the enemy's loot settings.
+     * @param {MovableObject} enemy - The defeated enemy dropping the coins.
+     */
     dropRandomCoins(enemy) {
         for (let c = 0; c < enemy.loot.coins; c++) {
             if (Math.random() < enemy.loot.coinChance) {
@@ -247,6 +332,10 @@ class World {
         }
     }
 
+    /**
+     * Creates collectible bottles based on the enemy's loot settings.
+     * @param {MovableObject} enemy - The defeated enemy dropping the bottles.
+     */
     dropRandomBottles(enemy) {
         for (let b = 0; b < enemy.loot.bottles; b++) {
             if (Math.random() < enemy.loot.bottleChance) {
@@ -258,6 +347,10 @@ class World {
         }
     }
 
+    /**
+     * Resets the world, character, collectibles and throwable objects
+     * to their initial state. Also resets the Endboss if present.
+     */
     resetWorldState() {
         this.collectibles = this.level.collectibles.map(c => new Collectible(c.type));
         this.camera_x = 0;
@@ -275,10 +368,18 @@ class World {
         }
     }
 
+    /**
+     * Enables or disables game sounds.
+     * @param {boolean} state - Determines whether game sounds are enabled.
+     */
     setSoundEnabled(state) {
         this.soundEnabled = state;
     }
 
+    /**
+     * Stops all sounds of the character, enemies, throwable objects
+     * and collectibles and disables game sounds.
+     */
     stopAllGameSounds() {
         this.soundEnabled = false;
         this.character.mute();
@@ -287,6 +388,10 @@ class World {
         this.collectibles.forEach(c => c.mute && c.mute());
     }
 
+    /**
+     * Resumes all sounds of the character, enemies, throwable objects
+     * and collectibles and enables game sounds.
+     */
     resumeAllGameSounds() {
         this.soundEnabled = true;
         this.character.unmute();
@@ -295,6 +400,10 @@ class World {
         this.collectibles.forEach(c => c.unmute && c.unmute());
     }
 
+    /**
+     * Draws all game objects, background objects, character and status bars.
+     * Continuously updates the canvas using requestAnimationFrame.
+     */
     draw() {
         if (this.gameState == 'won') return;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -322,6 +431,9 @@ class World {
         });
     }
 
+    /**
+     * Draws the current level-end hint message on the canvas.
+     */
     drawLevelEndNotice() {
         this.ctx.font = "32px Luckiest Guy";
         this.ctx.fillStyle = "yellow";
@@ -335,6 +447,9 @@ class World {
         this.ctx.textAlign = "left";
     }
 
+    /**
+     * Draws all background objects with their individual parallax effect.
+     */
     drawBackgrounds() {
         this.level.backgroundObjects.forEach(bg => {
             const offsetX = Math.round(
@@ -347,12 +462,21 @@ class World {
         });
     }
 
+    /**
+     * Adds multiple objects to the game map.
+     * @param {MovableObject[]} objects - Objects that should be drawn.
+     */
     addObjectsToMap(objects) {
         objects.forEach(o => {
             this.addToMap(o)
         });
     }
 
+    /**
+     * Adds a single movable object to the canvas.
+     * Handles horizontal image flipping when necessary.
+     * @param {MovableObject} mo - The object that should be drawn.
+     */
     addToMap(mo) {
         if (!mo || typeof mo.draw !== 'function') {
             return;
@@ -366,6 +490,10 @@ class World {
         }
     }
 
+    /**
+     * Saves the current canvas state and flips an object horizontally.
+     * @param {MovableObject} mo - The object whose image is flipped.
+     */
     flipImage(mo) {
         this.ctx.save();
         this.ctx.translate(mo.x + mo.width / 2, 0);
@@ -373,10 +501,16 @@ class World {
         this.ctx.translate(-mo.x - mo.width / 2, 0);
     }
 
+    /**
+     * Restores the previously saved canvas state after flipping an image.
+     */
     flipImageBack() {
         this.ctx.restore();
     }
 
+    /**
+     * Stops the current game loop and loads the next level.
+     */
     nextLevel() {
         clearInterval(this.intervalId);
         currentLevel++;

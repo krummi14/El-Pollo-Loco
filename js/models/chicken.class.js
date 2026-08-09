@@ -40,7 +40,11 @@ class Chicken extends MovableObject {
         this.setDirection();
         this.animateChicken();
     }
-
+    
+    /**
+     * Controls the chicken's movement, border behavior, sound effects,
+     * reaction to the character and coin conversion after death.
+     */
     animateChicken() {
         setInterval(() => {
             if (!this.isDead() && !this.hasPlayedSound && this.isVisible() && this.world.soundEnabled) {

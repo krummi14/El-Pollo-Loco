@@ -1,9 +1,19 @@
+/**
+ * Represents a moving cloud in the game background.
+ * Clouds are placed at non-overlapping horizontal positions
+ * and move continuously from right to left.
+ */
 class Cloud extends MovableObject {
     IMAGES_CLOUD = [
         'img/5_background/layers/4_clouds/1.png',
         'img/5_background/layers/4_clouds/2.png'
     ];
 
+    /**
+     * Creates a new cloud with a random non-overlapping position.
+     * @param {Cloud[]} existingClouds - Existing clouds used to prevent overlapping.
+     * @param {number} index - Index used to select the cloud image.
+     */
     constructor(existingClouds = [], index = 0) {
         super();
         this.width = 500;
@@ -15,6 +25,12 @@ class Cloud extends MovableObject {
         this.animateCloud();
     }
 
+    /**
+     * Finds a random horizontal position where the cloud does not overlap
+     * with any existing cloud.
+     * @param {Cloud[]} existingClouds - Existing clouds to check against.
+     * @returns {number} A suitable horizontal position for the new cloud.
+     */
     getNonOverlappingX(existingClouds) {
         let x;
         let tries = 0;
@@ -28,6 +44,9 @@ class Cloud extends MovableObject {
         return x;
     }
 
+    /**
+     * Starts the cloud animation and continuously moves the cloud to the left.
+     */
     animateCloud() {
         setInterval(() => {
             this.moveLeft();

@@ -68,6 +68,10 @@ class Character extends MovableObject {
     walking_sound = new Audio('audio/walking.mp3');
     isStunned = false;
 
+    /**
+    * Initializes the character, loads all required images and sounds,
+    * and starts gravity and character animations.
+    */
     constructor() {
         super().loadImage('img/2_character_pepe/2_walk/W-21.png');
         this.loadImages(this.IMAGES_WALKING);
@@ -93,6 +97,10 @@ class Character extends MovableObject {
         this.animateCharacter();
     }
 
+    /**
+     * Handles character movement, jumping, sounds, idle states,
+     * and camera positioning.
+     */
     animateCharacter() {
         setInterval(() => {
             if (!this.world) return;
@@ -171,11 +179,22 @@ class Character extends MovableObject {
         }, 150);
     }
 
+    /**
+     * Moves the character away from an enemy after being hit.
+     *
+     * @param {number} force - Strength of the knockback movement.
+     * @param {number} enemyX - X position of the enemy causing the knockback.
+     */
     applyKnockback(force, enemyX) {
         let direction = enemyX < this.x ? 1 : -1;
         this.x += direction * force;
     }
 
+    /**
+    * Temporarily prevents the character from moving after being hit.
+    *
+    * @param {number} duration - Duration of the stun effect in milliseconds.
+    */
     applyStun(duration) {
         if (duration <= 0) return;
         this.isStunned = true;
