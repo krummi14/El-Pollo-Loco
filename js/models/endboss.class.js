@@ -364,13 +364,15 @@ class Endboss extends MovableObject {
     }
 
     /**
-    * Plays the endboss sound when game sound is enabled and
-    * the sound is currently not playing.
-    */
+  * Plays the endboss sound only after the user has interacted
+  * with the game and enabled game sounds.
+  */
     playEndbossSound() {
-        if (!this.world || !this.world.soundEnabled) return;
+        if (!this.world) return;
+        if (!this.world.soundEnabled) return;
+        if (!this.world.userHasInteracted) return;
         if (this.endboss_sound.paused) {
-            this.endboss_sound.play();
+            this.endboss_sound.play().catch(() => { });
         }
     }
 

@@ -15,7 +15,8 @@ class World {
     throwableObjects = [];
     hintMessage = "";
     gameState = 'running';
-    soundEnabled = true;
+    soundEnabled = false;
+    userHasInteracted = false;
     throwCooldown = false;
 
     /**
@@ -374,6 +375,16 @@ class World {
      */
     setSoundEnabled(state) {
         this.soundEnabled = state;
+    }
+
+    /**
+   * Enables game sound after the user has interacted with
+   * the sound button and therefore allows browser audio playback.
+   */
+    enableSoundAfterUserInteraction() {
+        this.userHasInteracted = true;
+        this.soundEnabled = true;
+        this.resumeAllGameSounds();
     }
 
     /**

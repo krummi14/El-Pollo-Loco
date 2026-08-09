@@ -1,6 +1,6 @@
 let canvas;
 let world;
-let currentLevel = 3;
+let currentLevel = 1;
 let keyboard = new Keyboard();
 let startScreen = document.getElementById('startScreen');
 let fullScreen = document.getElementById('fullscreen');
@@ -45,7 +45,7 @@ function isMobile() {
  * Starts the game and prepares the game interface and audio.
  */
 function startGame() {
-    currentLevel = 3;
+    currentLevel = 1;
     checkMobile();
     hideGameCursor();
     setTimeout(() => thinkingBubble.classList.remove("hidden"), 1500);
@@ -81,7 +81,7 @@ function changeLevel() {
         pushCloudsIntoLevel();
         initLevel();
         world = new World(canvas, keyboard, level1);
-        world.soundEnabled = !soundMuted;
+        world.soundEnabled = !soundMuted && world.userHasInteracted;
         world.character.hasStarted = true;
     }
     if (currentLevel == 2) {
@@ -89,7 +89,7 @@ function changeLevel() {
         pushCloudsIntoLevel2();
         initLevel2();
         world = new World(canvas, keyboard, level2);
-        world.soundEnabled = !soundMuted;
+        world.soundEnabled = !soundMuted && world.userHasInteracted;
         world.character.hasStarted = true;
     }
     if (currentLevel == 3) {
@@ -97,13 +97,15 @@ function changeLevel() {
         pushCloudsIntoLevel3();
         initLevel3();
         world = new World(canvas, keyboard, level3);
-        world.soundEnabled = !soundMuted;
+        world.soundEnabled = !soundMuted && world.userHasInteracted;
         world.character.hasStarted = true;
     }
 }
 
 /**
  * Toggles the game's sound state and updates the sound button.
+ * The first activation also registers the user's interaction
+ * to allow browser audio playback.
  */
 function toggleSound() {
     soundMuted = !soundMuted;
@@ -112,11 +114,19 @@ function toggleSound() {
     soundBtn.blur();
     if (soundMuted) {
         muteAll();
+        return;
+    }
+    unmuteAll();
+    if (world) {
+        world.userHasInteracted = true;
+        world.soundEnabled = true;
+    }
+    if (isStoryOpen()) {
+        handleStoryAudio();
+    } else if (isStartScreenOpen() || isOptionOpen()) {
+        handleStartScreenAudio();
     } else {
-        unmuteAll();
-        if (isStoryOpen()) handleStoryAudio();
-        else if (isStartScreenOpen() || isOptionOpen()) handleStartScreenAudio();
-        else handleGameAudio();
+        handleGameAudio();
     }
 }
 
@@ -143,29 +153,39 @@ function unmuteAll() {
  * Starts the story audio and reduces the volume of the start screen audio.
  */
 function handleStoryAudio() {
+    if (soundMuted) return;
     gameStory_sound.currentTime = 0;
-    gameStory_sound.play();
+    gameStory_sound.play().catch(() => { });
     startScreen_sound.volume = 0.3;
-    if (startScreen_sound.paused) startScreen_sound.play();
+    if (startScreen_sound.paused) {
+        startScreen_sound.play().catch(() => { });
+    }
 }
 
 /**
  * Starts the audio for the start screen.
  */
 function handleStartScreenAudio() {
+    if (soundMuted) return;
     startScreen_sound.volume = 1;
-    startScreen_sound.play();
+    startScreen_sound.play().catch(() => { });
 }
 
 /**
- * Switches from menu audio to game audio.
+ * Switches from menu audio to game audio after audio playback
+ * has been enabled by the user's interaction.
  */
 function handleGameAudio() {
     startScreen_sound.pause();
     startScreen_sound.currentTime = 0;
     gameStory_sound.pause();
     gameStory_sound.currentTime = 0;
-    if (!soundMuted && world && world.resumeAllGameSounds) {
+    if (
+        !soundMuted &&
+        world &&
+        world.userHasInteracted &&
+        world.resumeAllGameSounds
+    ) {
         world.resumeAllGameSounds();
     }
 }
@@ -432,9 +452,11 @@ function showGameOverScreen() {
     winImg.classList.add('display_none');
     gameOverImg.classList.remove('display_none');
     if (!soundMuted) {
-        gameOver_sound.play();
+        gameOver_sound.play().catch(() => { });
     }
 }
+
+
 
 /**
  * Moves the custom cursor outside the visible game area.
