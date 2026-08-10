@@ -40,40 +40,118 @@ class Chicken extends MovableObject {
         this.setDirection();
         this.animateChicken();
     }
-    
+
     /**
-     * Controls the chicken's movement, border behavior, sound effects,
-     * reaction to the character and coin conversion after death.
-     */
+ * Starts the chicken movement and animation intervals.
+ */
     animateChicken() {
-        setInterval(() => {
-            if (!this.isDead() && !this.hasPlayedSound && this.isVisible() && this.world.soundEnabled) {
-                this.chicken_sound.play();
-                this.hasPlayedSound = true;
-            }
-            if (this.hasPlayedSound && (!this.isVisible() || !this.world.soundEnabled)) {
-                this.chicken_sound.pause();
-                this.hasPlayedSound = false;
-            }
-            let distance = this.getDistanceToCharacter();
-            if (!this.isNearBorder(100)) {
-                if (Math.abs(distance) < 300) {
-                    this.direction = distance < 0 ? 'left' : 'right';
-                }
-            }
-            if (this.isDead()) {
-                this.chicken_sound.pause();
-                this.startCoinConversion();
-                return;
-            }
-            this.moveWithBorders();
-        }, 1000 / 60);
-        setInterval(() => {
-            if (this.isDead()) {
-                this.playAnimation(this.IMAGE_DEAD);
-            } else {
-                this.playAnimation(this.IMAGES_WALKING);
-            }
-        }, 200);
+        this.startChickenMovementInterval();
+        this.startChickenAnimationInterval();
+    }
+
+    /**
+     * Starts the interval responsible for chicken movement.
+     */
+    startChickenMovementInterval() {
+        setInterval(() => this.updateChickenMovement(), 1000 / 60);
+    }
+
+    /**
+     * Updates the chicken's movement, sound and character reaction.
+     */
+    updateChickenMovement() {
+        this.handleChickenSound();
+        this.handleCharacterDirection();
+        if (this.isDead()) return this.handleChickenDeath();
+        this.moveWithBorders();
+    }
+
+    /**
+     * Handles the chicken sound based on visibility and sound settings.
+     */
+    handleChickenSound() {
+        this.startChickenSound();
+        this.stopChickenSound();
+    }
+
+    /**
+     * Starts the chicken sound when all required conditions are met.
+     */
+    startChickenSound() {
+        if (this.canPlayChickenSound()) {
+            this.chicken_sound.play();
+            this.hasPlayedSound = true;
+        }
+    }
+
+    /**
+     * Checks whether the chicken sound can currently be played.
+     * @returns {boolean} True if the sound can be played.
+     */
+    canPlayChickenSound() {
+        return !this.isDead()
+            && !this.hasPlayedSound
+            && this.isVisible()
+            && this.world.soundEnabled;
+    }
+
+    /**
+     * Stops the chicken sound when it is no longer required.
+     */
+    stopChickenSound() {
+        if (this.hasPlayedSound && (!this.isVisible() || !this.world.soundEnabled)) {
+            this.chicken_sound.pause();
+            this.hasPlayedSound = false;
+        }
+    }
+
+    /**
+     * Adjusts the chicken's direction when the character is nearby.
+     */
+    handleCharacterDirection() {
+        const distance = this.getDistanceToCharacter();
+        if (this.shouldFollowCharacter(distance)) {
+            this.setDirectionToCharacter(distance);
+        }
+    }
+
+    /**
+     * Checks whether the chicken should react to the character.
+     * @param {number} distance - Distance between chicken and character.
+     * @returns {boolean} True if the character is within reaction range.
+     */
+    shouldFollowCharacter(distance) {
+        return !this.isNearBorder(100) && Math.abs(distance) < 300;
+    }
+
+    /**
+     * Sets the chicken's direction toward the character.
+     * @param {number} distance - Distance between chicken and character.
+     */
+    setDirectionToCharacter(distance) {
+        this.direction = distance < 0 ? 'left' : 'right';
+    }
+
+    /**
+     * Handles the chicken after it has died.
+     */
+    handleChickenDeath() {
+        this.chicken_sound.pause();
+        this.startCoinConversion();
+    }
+
+    /**
+     * Starts the interval responsible for chicken animations.
+     */
+    startChickenAnimationInterval() {
+        setInterval(() => this.playChickenAnimation(), 200);
+    }
+
+    /**
+     * Plays the appropriate animation based on the chicken's state.
+     */
+    playChickenAnimation() {
+        const images = this.isDead() ? this.IMAGE_DEAD : this.IMAGES_WALKING;
+        this.playAnimation(images);
     }
 }

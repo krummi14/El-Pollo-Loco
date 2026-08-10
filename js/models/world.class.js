@@ -70,6 +70,7 @@ class World {
             this.checkLost();
             this.checkGameOver();
             this.convertDeadChickensToCoins();
+            this.convertCoinsToBottles();
         }, 1000 / 60);
     }
 
@@ -165,35 +166,92 @@ class World {
     }
 
     /**
-  * Checks collisions between thrown bottles and enemies.
-  * Applies damage and triggers the appropriate bottle splash effect.
-  * The endboss cannot be hit by bottles while performing a charge attack.
-  */
+ * Checks all thrown bottles for collisions with enemies.
+ */
     betweenEnemiesAndBottle() {
         this.throwableObjects.forEach((bottle) => {
-            if (bottle.isSplashed) return;
-            this.level.enemies.forEach((enemy) => {
-                if (bottle.isSplashed) return;
-                if (enemy instanceof Endboss && enemy.isCharging) {
-                    return;
-                }
-                if (!bottle.isColliding(enemy)) return;
-                if (enemy instanceof Endboss) {
-                    enemy.hit(20);
-                    this.statusBarEndboss.setPercentage(enemy.energy);
-                    bottle.splash();
-                    return;
-                }
-                if (enemy instanceof Chicken || enemy instanceof Babychicken) {
-                    enemy.hit();
-                    if (enemy.isDead()) {
-                        enemy.isConvertedToCoin = true;
-                        enemy.startCoinConversion();
-                    }
-                    bottle.splash();
-                }
-            });
+            this.checkBottleCollisions(bottle);
         });
+    }
+
+    /**
+     * Checks a thrown bottle against all enemies.
+     * @param {Bottle} bottle - The thrown bottle to check.
+     */
+    checkBottleCollisions(bottle) {
+        if (bottle.isSplashed) return;
+        this.level.enemies.forEach((enemy) => {
+            this.handleBottleEnemyCollision(bottle, enemy);
+        });
+    }
+
+    /**
+     * Handles the collision between a bottle and an enemy.
+     * @param {Bottle} bottle - The thrown bottle.
+     * @param {MovableObject} enemy - The enemy to check.
+     */
+    handleBottleEnemyCollision(bottle, enemy) {
+        if (this.cannotHitEnemy(bottle, enemy)) return;
+        if (!bottle.isColliding(enemy)) return;
+        this.handleBottleHit(bottle, enemy);
+    }
+
+    /**
+     * Checks whether the bottle cannot currently hit the enemy.
+     * @param {Bottle} bottle - The thrown bottle.
+     * @param {MovableObject} enemy - The enemy to check.
+     * @returns {boolean} True if the collision should be ignored.
+     */
+    cannotHitEnemy(bottle, enemy) {
+        return bottle.isSplashed
+            || (enemy instanceof Endboss && enemy.isCharging);
+    }
+
+    /**
+     * Applies the appropriate effect when a bottle hits an enemy.
+     * @param {Bottle} bottle - The thrown bottle.
+     * @param {MovableObject} enemy - The hit enemy.
+     */
+    handleBottleHit(bottle, enemy) {
+        if (enemy instanceof Endboss) {
+            this.handleEndbossBottleHit(bottle, enemy);
+            return;
+        }
+        if (enemy instanceof Chicken || enemy instanceof Babychicken) {
+            this.handleChickenBottleHit(bottle, enemy);
+        }
+    }
+
+    /**
+     * Applies damage and splash effects when hitting the endboss.
+     * @param {Bottle} bottle - The thrown bottle.
+     * @param {Endboss} enemy - The hit endboss.
+     */
+    handleEndbossBottleHit(bottle, enemy) {
+        enemy.hit(20);
+        this.statusBarEndboss.setPercentage(enemy.energy);
+        bottle.splash();
+    }
+
+    /**
+     * Applies damage and coin conversion when hitting a chicken.
+     * @param {Bottle} bottle - The thrown bottle.
+     * @param {Chicken|Babychicken} enemy - The hit chicken.
+     */
+    handleChickenBottleHit(bottle, enemy) {
+        enemy.hit();
+        this.convertDeadChicken(enemy);
+        bottle.splash();
+    }
+
+    /**
+     * Converts a defeated chicken into a coin.
+     * @param {Chicken|Babychicken} enemy - The defeated chicken.
+     */
+    convertDeadChicken(enemy) {
+        if (!enemy.isDead()) return;
+        enemy.isConvertedToCoin = true;
+        enemy.startCoinConversion();
     }
 
     /**
@@ -346,6 +404,74 @@ class World {
                 this.collectibles.push(bottle);
             }
         }
+    }
+
+    /**
+ * Converts collected coins into bottles when the level conditions are met.
+ */
+    convertCoinsToBottles() {
+        if (!this.canConvertCoinsToBottles()) return;
+        this.convertCoins();
+    }
+
+    /**
+     * Checks whether coins can currently be converted into bottles.
+     * @returns {boolean} True if all conversion conditions are fulfilled.
+     */
+    canConvertCoinsToBottles() {
+        return currentLevel === 3
+            && this.character.energy > 0
+            && this.character.bottles === 0
+            && this.character.coins > 0
+            && this.endboss?.energy > 0
+            && !this.areChickensAlive()
+            && this.onlyEndbossRemains();
+    }
+
+    /**
+     * Checks whether any chicken is still alive.
+     * @returns {boolean} True if a chicken or baby chicken remains.
+     */
+    areChickensAlive() {
+        return this.level.enemies.some(
+            enemy => enemy instanceof Chicken || enemy instanceof Babychicken
+        );
+    }
+
+    /**
+     * Checks whether the endboss is the only remaining enemy.
+     * @returns {boolean} True if only endboss enemies remain.
+     */
+    onlyEndbossRemains() {
+        return this.level.enemies.every(
+            enemy => enemy instanceof Endboss
+        );
+    }
+
+    /**
+     * Converts up to five collected coins into bottles.
+     */
+    convertCoins() {
+        const bottles = Math.min(this.character.coins, 5);
+        this.character.bottles = bottles;
+        this.character.coins = 0;
+        this.updateBottleStatusBar(bottles);
+        this.updateCoinStatusBar();
+    }
+
+    /**
+     * Updates the bottle status bar after the conversion.
+     * @param {number} bottles - Number of bottles received.
+     */
+    updateBottleStatusBar(bottles) {
+        this.statusBarBottle.setPercentage(bottles * 20);
+    }
+
+    /**
+     * Resets the coin status bar after the conversion.
+     */
+    updateCoinStatusBar() {
+        this.statusBarCoins.setPercentage(0);
     }
 
     /**

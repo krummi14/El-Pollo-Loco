@@ -44,6 +44,10 @@
             <button id="optnBtn" class="generally_btn optn_btn kill_btn" onclick="openOption()">Options</button>
             <button id="introBtn" class="generally_btn intro_btn kill_btn" onclick="openStory()">Game Story</button>
         </div>
+
+        <div class="impressum_btn_wrapper">
+            <button class="impressum_btn kill_btn" onclick="openImpressum()">Impressum</button>
+        </div>
     </div>
 
     <div id="rotateDeviceOverlay" class="rotate_overlay hidden">
@@ -83,6 +87,19 @@
         <div class="btn_direction">
             <button class="generally_btn win_btn kill_btn" onclick="startGame()">Restart Game</button>
             <button class="generally_btn win_btn kill_btn" onclick="openStartScreen()">Back to Startscreen</button>
+        </div>
+    </div>
+
+    <div id="impressum" class="impressum display_none">
+        <div class="impressum_content">
+            <h2>Impressum</h2>
+            <p><strong>Angaben gemäß § 5 TMG</strong></p>
+            <p>Daniel Krummhauer</p>
+            <p><strong>Kontakt</strong><br>E-Mail: d.krummhauer@gmail.com</p>
+            <p><strong>Hinweis</strong><br>
+                Dies ist ein privates Webprojekt und dient ausschließlich
+                zu Demonstrations- und Lernzwecken.</p>
+            <button class="generally_btn intro_btn kill_btn" onclick="closeImpressum()">Back</button>
         </div>
     </div>
 

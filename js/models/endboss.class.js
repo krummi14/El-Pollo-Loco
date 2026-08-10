@@ -377,30 +377,84 @@ class Endboss extends MovableObject {
     }
 
     /**
-    * Starts the endboss AI and animation loops and updates
-    * movement, attacks, sounds and animations while the game
-    * is running.
-    */
+ * Starts the endboss movement and animation intervals.
+ */
     animateEndboss() {
-        setInterval(() => {
-            if (this.world.gameState != 'running') return;
-            if (this.isDead()) return;
-            if (!this.endbossWantsToFight()) return;
-            this.playEndbossSound();
-            this.updateBossAI();
+        this.startEndbossMovementInterval();
+        this.startEndbossAnimationInterval();
+    }
 
-        }, 1000 / 60);
-        setInterval(() => {
-            if (this.world.gameState != 'running') return;
-            if (this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
-            } else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-            } else if (this.isCharging) {
-                this.playAnimation(this.IMAGES_ATTACK);
-            } else if (this.endbossWantsToFight()) {
-                this.playAnimation(this.IMAGES_WALKING);
-            }
-        }, 200);
+    /**
+     * Starts the interval responsible for the endboss AI.
+     */
+    startEndbossMovementInterval() {
+        setInterval(() => this.updateEndbossMovement(), 1000 / 60);
+    }
+
+    /**
+     * Updates the endboss AI, sounds and movement.
+     */
+    updateEndbossMovement() {
+        if (!this.canEndbossAct()) return;
+        this.playEndbossSound();
+        this.updateBossAI();
+    }
+
+    /**
+     * Checks whether the endboss can currently perform actions.
+     * @returns {boolean} True if the endboss can act.
+     */
+    canEndbossAct() {
+        return this.world.gameState === 'running'
+            && !this.isDead()
+            && this.endbossWantsToFight();
+    }
+
+    /**
+     * Starts the interval responsible for endboss animations.
+     */
+    startEndbossAnimationInterval() {
+        setInterval(() => this.updateEndbossAnimation(), 200);
+    }
+
+    /**
+     * Updates the endboss animation according to its current state.
+     */
+    updateEndbossAnimation() {
+        if (this.world.gameState !== 'running') return;
+        if (this.isDead()) return this.playEndbossDeathAnimation();
+        if (this.isHurt()) return this.playEndbossHurtAnimation();
+        if (this.isCharging) return this.playEndbossAttackAnimation();
+        this.playEndbossWalkingAnimation();
+    }
+
+    /**
+     * Plays the endboss death animation.
+     */
+    playEndbossDeathAnimation() {
+        this.playAnimation(this.IMAGES_DEAD);
+    }
+
+    /**
+     * Plays the endboss hurt animation.
+     */
+    playEndbossHurtAnimation() {
+        this.playAnimation(this.IMAGES_HURT);
+    }
+
+    /**
+     * Plays the endboss attack animation while charging.
+     */
+    playEndbossAttackAnimation() {
+        this.playAnimation(this.IMAGES_ATTACK);
+    }
+
+    /**
+     * Plays the endboss walking animation while fighting.
+     */
+    playEndbossWalkingAnimation() {
+        if (this.endbossWantsToFight()) {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
     }
 }  

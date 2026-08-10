@@ -15,9 +15,9 @@ class Collectible extends DrawableObject {
         super();
         this.setTypeOfCollectible(type);
         this.x = this.x = 200 + Math.random() * 2000;
-        this.y = 370;
-        this.height = 60;
-        this.width = 50;
+        this.y = 330;
+        this.height = 100;
+        this.width = 80;
     }
 
     /**

@@ -72,8 +72,8 @@ body::before {
 
 .sound_btn {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    top: 40px;
+    right: max(20px, calc((100vw - 1040px) / 2));
     width: 56px;
     height: 56px;
     border: none;
@@ -226,9 +226,13 @@ canvas {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     width: 100%;
+    max-width: 1040px;
+    gap: 40px;
 }
+
+
 
 /*---- Full Screen ---- */
 
@@ -381,6 +385,78 @@ canvas {
     font-size: clamp(14px, 2.4vh, 24px);
     line-height: 1.4;
     word-break: break-word;
+}
+
+/* ----- Impressum ----- */
+
+.impressum {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+        url('img/9_intro_outro_screens/start/startscreen_2.png') center / cover no-repeat;
+
+    padding: 20px;
+    z-index: 5;
+}
+
+.impressum_content {
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: clamp(20px, 4vw, 40px);
+    background: rgba(255, 243, 196, 0.8);
+    border-radius: 24px;
+    box-shadow: 0 6px 0 rgba(198, 139, 0, 0.5);
+    text-align: center;
+    backdrop-filter: blur(6px);
+}
+
+.impressum_content h2 {
+    margin-bottom: 24px;
+}
+
+.impressum_content p {
+    font-family: Arial, sans-serif;
+    font-size: clamp(14px, 1.8vw, 18px);
+    line-height: 1.5;
+    color: black;
+    margin: 16px 0;
+}
+
+.impressum_btn_wrapper {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.impressum_btn {
+    position: fixed;
+    top: 40px;
+    left: max(20px, calc((100vw - 1040px) / 2));
+    pointer-events: auto;
+    border: none;
+    background: transparent;
+    color: #372100;
+    font-size: 14px;
+    text-shadow: 1px 1px 2px #372100;
+    padding: 8px 14px;
+    transition:
+        transform 0.2s ease,
+        color 0.2s ease;
+}
+
+.impressum_btn:hover {
+    color: #ffcc4d;
+    transform: scale(1.08);
 }
 
 /*------ Win Screen -------*/

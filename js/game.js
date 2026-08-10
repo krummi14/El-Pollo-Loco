@@ -20,7 +20,7 @@ let soundBtn = document.getElementById('soundBtn');
 let startScreen_sound = new Audio('audio/intromusic.mp3');
 let gameStory_sound = new Audio('audio/gameStory.mp3');
 let gameOver_sound = new Audio('audio/gameOver.wav');
-let soundMuted = JSON.parse(localStorage.getItem("soundMuted")) ?? true;;
+let soundMuted = JSON.parse(localStorage.getItem("soundMuted")) ?? true;
 const deadChicken = 'img/3_enemies_chicken/chicken_normal/2_dead/dead.png';
 const normalChicken = 'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png';
 
@@ -48,17 +48,19 @@ function startGame() {
     currentLevel = 1;
     checkMobile();
     hideGameCursor();
-    setTimeout(() => thinkingBubble.classList.remove("hidden"), 1500);
     startScreen.classList.add('fade_out');
+    gameIsVisible();
+    initGame();
+    world.userHasInteracted = true;
+    if (soundMuted) {
+        muteAll();
+    } else {
+        world.soundEnabled = true;
+        handleGameAudio();
+    }
     setTimeout(() => {
-        gameIsVisible();
-        initGame();
-        if (soundMuted) {
-            muteAll();
-        } else {
-            handleGameAudio();
-        }
-    }, 800);
+        thinkingBubble.classList.remove("hidden");
+    }, 1500);
 }
 
 /**
@@ -80,26 +82,29 @@ function changeLevel() {
         resetLevel1();
         pushCloudsIntoLevel();
         initLevel();
-        world = new World(canvas, keyboard, level1);
-        world.soundEnabled = !soundMuted && world.userHasInteracted;
-        world.character.hasStarted = true;
+        changeLevelhelper(level1);
     }
     if (currentLevel == 2) {
         resetLevel2();
         pushCloudsIntoLevel2();
         initLevel2();
-        world = new World(canvas, keyboard, level2);
-        world.soundEnabled = !soundMuted && world.userHasInteracted;
-        world.character.hasStarted = true;
+        changeLevelhelper(level2);
     }
     if (currentLevel == 3) {
         resetLevel3();
         pushCloudsIntoLevel3();
         initLevel3();
-        world = new World(canvas, keyboard, level3);
-        world.soundEnabled = !soundMuted && world.userHasInteracted;
-        world.character.hasStarted = true;
+        changeLevelhelper(level3);
     }
+}
+
+/**
+ * helper for changeLevel methode
+ */
+function changeLevelhelper(level) {
+    world = new World(canvas, keyboard, level);
+    world.soundEnabled = !soundMuted && world.userHasInteracted;
+    world.character.hasStarted = true;
 }
 
 /**
@@ -456,14 +461,28 @@ function showGameOverScreen() {
     }
 }
 
-
-
 /**
  * Moves the custom cursor outside the visible game area.
  */
 function hideGameCursor() {
     cursor.style.left = "-100px";
     cursor.style.top = "-100px";
+}
+
+/**
+ * Open Impressum
+ */
+function openImpressum() {
+    document.getElementById('startScreen').classList.add('display_none');
+    document.getElementById('impressum').classList.remove('display_none');
+}
+
+/**
+ * Close Impressum
+ */
+function closeImpressum() {
+    document.getElementById('impressum').classList.add('display_none');
+    document.getElementById('startScreen').classList.remove('display_none');
 }
 
 window.addEventListener("keydown", (e) => {

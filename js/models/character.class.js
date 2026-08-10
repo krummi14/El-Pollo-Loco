@@ -98,85 +98,240 @@ class Character extends MovableObject {
     }
 
     /**
-     * Handles character movement, jumping, sounds, idle states,
-     * and camera positioning.
-     */
+ * Starts the character movement and animation intervals.
+ */
     animateCharacter() {
-        setInterval(() => {
-            if (!this.world) return;
-            if (this.world.character.isStunned) return;
-            if (this.world.gameState != 'running') return;
-            if (this.world.gameState == 'won') return;
-            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-                this.moveRight();
-                this.otherDirection = false;
-                this.lastAction = Date.now();
-                if (this.world.soundEnabled) {
-                    this.sounds.walk.play();
-                }
-            }
-            if (this.world.keyboard.LEFT && this.x > this.world.level.level_start_x) {
-                this.moveLeft();
-                this.otherDirection = true;
-                this.lastAction = Date.now();
-                if (this.world.soundEnabled) {
-                    this.sounds.walk.play();
-                }
-            }
-            if (this.world.keyboard.SPACE && !this.jumps) {
-                this.jump();
-                this.lastAction = Date.now();
-                if (this.world.soundEnabled) {
-                    this.sounds.jump.play();
-                }
-            }
-            if (!this.isAboveGround()) {
-                this.jumps = false;
-            }
-            if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.SPACE) {
-                const bubble = document.getElementById("pepeThoughtBubble");
-                if (bubble && !bubble.classList.contains("hidden")) {
-                    bubble.classList.add("hidden");
-                }
-            }
-            if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                if (this.sounds.walk.paused && this.world.soundEnabled) {
-                    this.sounds.walk.play();
-                }
-            } else {
-                if (!this.sounds.walk.paused) {
-                    this.sounds.walk.pause();
-                }
-            }
-            this.world.camera_x = -this.x + 100;
-        }, 1000 / 60);
-        setInterval(() => {
-            if (!this.world) return;
-            if (this.world.gameState != 'running') return;
-            if (this.world.gameState == 'won') return;
-            if (this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
-            } else if (this.isAboveGround()) {
-                this.playAnimation(this.IMAGES_JUNPING);
-            } else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURTING);
-                if (this.world.soundEnabled) {
-                    this.sounds.ouch.play();
-                }
-            } else if (this.isWaiting()) {
-                this.playAnimation(this.IMAGES_WAITING);
-            } else if (this.isSleeping()) {
-                this.playAnimation(this.IMAGES_SLEEPING);
-                if (this.world.soundEnabled) {
-                    this.sounds.snoring.play();
-                }
-            } else {
-                this.sounds.snoring.pause();
-                if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                    this.playAnimation(this.IMAGES_WALKING);
-                }
-            }
-        }, 150);
+        this.startMovementInterval();
+        this.startAnimationInterval();
+    }
+
+    /**
+     * Starts the interval for character movement and interactions.
+     */
+    startMovementInterval() {
+        setInterval(() => this.updateCharacterMovement(), 1000 / 60);
+    }
+
+    /**
+     * Updates movement, jumping, sounds, UI and camera position.
+     */
+    updateCharacterMovement() {
+        if (!this.canMoveCharacter()) return;
+        this.handleHorizontalMovement();
+        this.handleJumpInput();
+        this.resetJumpState();
+        this.hideThoughtBubble();
+        this.handleWalkSound();
+        this.updateCameraPosition();
+    }
+
+    /**
+     * Checks whether the character can currently move.
+     * @returns {boolean} True if the character can move.
+     */
+    canMoveCharacter() {
+        return this.world
+            && !this.world.character.isStunned
+            && this.world.gameState === 'running';
+    }
+
+    /**
+     * Handles horizontal movement based on keyboard input.
+     */
+    handleHorizontalMovement() {
+        if (this.world.keyboard.RIGHT && this.canMoveRight()) {
+            this.moveRight();
+            this.otherDirection = false;
+            this.updateLastAction();
+        }
+        if (this.world.keyboard.LEFT && this.canMoveLeft()) {
+            this.moveLeft();
+            this.otherDirection = true;
+            this.updateLastAction();
+        }
+    }
+
+    /**
+     * Checks whether the character can move to the right.
+     * @returns {boolean} True if movement to the right is possible.
+     */
+    canMoveRight() {
+        return this.x < this.world.level.level_end_x;
+    }
+
+    /**
+     * Checks whether the character can move to the left.
+     * @returns {boolean} True if movement to the left is possible.
+     */
+    canMoveLeft() {
+        return this.x > this.world.level.level_start_x;
+    }
+
+    /**
+     * Updates the timestamp of the character's last action.
+     */
+    updateLastAction() {
+        this.lastAction = Date.now();
+    }
+
+    /**
+     * Handles jumping based on keyboard input.
+     */
+    handleJumpInput() {
+        if (this.world.keyboard.SPACE && !this.jumps) {
+            this.jump();
+            this.updateLastAction();
+            this.playJumpSound();
+        }
+    }
+
+    /**
+     * Plays the jump sound when sound is enabled.
+     */
+    playJumpSound() {
+        if (this.world.soundEnabled) {
+            this.sounds.jump.play();
+        }
+    }
+
+    /**
+     * Resets the jump state after the character lands.
+     */
+    resetJumpState() {
+        if (!this.isAboveGround()) {
+            this.jumps = false;
+        }
+    }
+
+    /**
+     * Hides the thought bubble after character input.
+     */
+    hideThoughtBubble() {
+        const bubble = document.getElementById('pepeThoughtBubble');
+        const hasInput = this.world.keyboard.RIGHT
+            || this.world.keyboard.LEFT
+            || this.world.keyboard.SPACE;
+        if (bubble && hasInput) bubble.classList.add('hidden');
+    }
+
+    /**
+     * Handles walking sound based on horizontal movement.
+     */
+    handleWalkSound() {
+        const isWalking = this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
+        if (isWalking && this.world.soundEnabled) {
+            this.playWalkSound();
+        } else {
+            this.stopWalkSound();
+        }
+    }
+
+    /**
+     * Starts the walking sound if it is currently paused.
+     */
+    playWalkSound() {
+        if (this.sounds.walk.paused) {
+            this.sounds.walk.play();
+        }
+    }
+
+    /**
+     * Stops the walking sound when the character is not moving.
+     */
+    stopWalkSound() {
+        if (!this.sounds.walk.paused) {
+            this.sounds.walk.pause();
+        }
+    }
+
+    /**
+     * Updates the camera position according to the character position.
+     */
+    updateCameraPosition() {
+        this.world.camera_x = -this.x + 100;
+    }
+
+    /**
+     * Starts the interval for character animations.
+     */
+    startAnimationInterval() {
+        setInterval(() => this.updateCharacterAnimation(), 150);
+    }
+
+    /**
+     * Updates the character animation according to its current state.
+     */
+    updateCharacterAnimation() {
+        if (!this.canAnimateCharacter()) return;
+        if (this.isDead()) return this.playDeathAnimation();
+        if (this.isAboveGround()) return this.playJumpAnimation();
+        if (this.isHurt()) return this.playHurtAnimation();
+        if (this.isWaiting()) return this.playWaitingAnimation();
+        if (this.isSleeping()) return this.playSleepingAnimation();
+        this.playWalkingAnimation();
+    }
+
+    /**
+     * Checks whether character animations can currently be played.
+     * @returns {boolean} True if animations can be played.
+     */
+    canAnimateCharacter() {
+        return this.world && this.world.gameState === 'running';
+    }
+
+    /**
+     * Plays the character's death animation.
+     */
+    playDeathAnimation() {
+        this.playAnimation(this.IMAGES_DEAD);
+    }
+
+    /**
+     * Plays the character's jumping animation.
+     */
+    playJumpAnimation() {
+        this.playAnimation(this.IMAGES_JUNPING);
+    }
+
+    /**
+     * Plays the character's hurt animation and sound.
+     */
+    playHurtAnimation() {
+        this.playAnimation(this.IMAGES_HURTING);
+        if (this.world.soundEnabled) this.sounds.ouch.play();
+    }
+
+    /**
+     * Plays the character's waiting animation.
+     */
+    playWaitingAnimation() {
+        this.playAnimation(this.IMAGES_WAITING);
+    }
+
+    /**
+     * Plays the sleeping animation and snoring sound.
+     */
+    playSleepingAnimation() {
+        this.playAnimation(this.IMAGES_SLEEPING);
+        if (this.world.soundEnabled) this.sounds.snoring.play();
+    }
+
+    /**
+     * Plays the walking animation when the character is moving.
+     */
+    playWalkingAnimation() {
+        this.sounds.snoring.pause();
+        if (this.isMovingHorizontally()) {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
+    }
+
+    /**
+     * Checks whether the character is moving horizontally.
+     * @returns {boolean} True if left or right movement is active.
+     */
+    isMovingHorizontally() {
+        return this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
     }
 
     /**
