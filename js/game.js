@@ -108,94 +108,6 @@ function changeLevelhelper(level) {
 }
 
 /**
- * Toggles the game's sound state and updates the sound button.
- * The first activation also registers the user's interaction
- * to allow browser audio playback.
- */
-function toggleSound() {
-    soundMuted = !soundMuted;
-    localStorage.setItem("soundMuted", JSON.stringify(soundMuted));
-    soundBtn.textContent = soundMuted ? "🔇" : "🔊";
-    soundBtn.blur();
-    if (soundMuted) {
-        muteAll();
-        return;
-    }
-    unmuteAll();
-    if (world) {
-        world.userHasInteracted = true;
-        world.soundEnabled = true;
-    }
-    if (isStoryOpen()) {
-        handleStoryAudio();
-    } else if (isStartScreenOpen() || isOptionOpen()) {
-        handleStartScreenAudio();
-    } else {
-        handleGameAudio();
-    }
-}
-
-/**
- * Pauses all active game and interface sounds.
- */
-function muteAll() {
-    startScreen_sound.pause();
-    gameStory_sound.pause();
-    gameOver_sound.pause();
-    gameOver_sound.currentTime = 0;
-    if (world) world.stopAllGameSounds();
-}
-
-/**
- * Restores the default volume of interface sounds.
- */
-function unmuteAll() {
-    startScreen_sound.volume = 1;
-    gameStory_sound.volume = 1;
-}
-
-/**
- * Starts the story audio and reduces the volume of the start screen audio.
- */
-function handleStoryAudio() {
-    if (soundMuted) return;
-    gameStory_sound.currentTime = 0;
-    gameStory_sound.play().catch(() => { });
-    startScreen_sound.volume = 0.3;
-    if (startScreen_sound.paused) {
-        startScreen_sound.play().catch(() => { });
-    }
-}
-
-/**
- * Starts the audio for the start screen.
- */
-function handleStartScreenAudio() {
-    if (soundMuted) return;
-    startScreen_sound.volume = 1;
-    startScreen_sound.play().catch(() => { });
-}
-
-/**
- * Switches from menu audio to game audio after audio playback
- * has been enabled by the user's interaction.
- */
-function handleGameAudio() {
-    startScreen_sound.pause();
-    startScreen_sound.currentTime = 0;
-    gameStory_sound.pause();
-    gameStory_sound.currentTime = 0;
-    if (
-        !soundMuted &&
-        world &&
-        world.userHasInteracted &&
-        world.resumeAllGameSounds
-    ) {
-        world.resumeAllGameSounds();
-    }
-}
-
-/**
  * Checks whether the story screen is currently open.
  *
  * @returns {boolean} True if the story screen is visible.
@@ -241,56 +153,6 @@ function gameIsVisible() {
     fullScreen.classList.remove('display_none');
     fullScreen.classList.add('visible');
     winLostScreen.classList.add('display_none');
-}
-
-/**
- * Opens the options screen and hides the start screen.
- */
-function openOption() {
-    optionScreen.classList.remove('display_none');
-    startScreen.classList.add('display_none');
-    if (soundMuted) {
-        muteAll();
-    } else {
-        handleStartScreenAudio();
-    }
-}
-
-/**
- * Closes the options screen and returns to the start screen.
- */
-function closeOption() {
-    optionScreen.classList.add('display_none');
-    startScreen.classList.remove('display_none');
-    if (soundMuted) {
-        muteAll();
-    } else {
-        handleStartScreenAudio();
-    }
-}
-
-/**
- * Opens the story screen and hides the start screen.
- */
-function openStory() {
-    storyScreen.classList.remove('display_none');
-    startScreen.classList.add('display_none');
-    if (soundMuted) {
-        muteAll();
-    } else {
-        handleStoryAudio();
-    }
-}
-
-/**
- * Closes the story screen and returns to the start screen.
- */
-function closeStory() {
-    storyScreen.classList.add('display_none');
-    startScreen.classList.remove('display_none');
-    gameStory_sound.pause();
-    gameStory_sound.currentTime = 0;
-    if (!soundMuted) handleStartScreenAudio();
 }
 
 /**
@@ -370,56 +232,6 @@ function hideScreen(screen1, screen2) {
 }
 
 /**
- * Opens the start screen and hides the game result screen.
- */
-function openStartScreen() {
-    hideScreen(startScreen, winLostScreen);
-    fullScreen.classList.add('display_none');
-    checkMobile();
-}
-
-/**
- * Toggles fullscreen mode for the game.
- */
-function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-        openFullscreen(fullScreen);
-        gameHeadline.classList.add('display_none');
-
-    } else {
-        closeFullscreen();
-    }
-}
-
-/**
- * Requests fullscreen mode for the given element.
- *
- * @param {HTMLElement} elem - Element that should enter fullscreen mode.
- */
-function openFullscreen(elem) {
-    if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-    } else if (elem.webkitRequestFullscreen) {
-        elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) {
-        elem.msRequestFullscreen();
-    }
-}
-
-/**
- * Exits fullscreen mode using the browser's supported API.
- */
-function closeFullscreen() {
-    if (document.exitFullscreen) {
-        document.exitFullscreen();
-    } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-    }
-}
-
-/**
  * Updates the canvas size and game headline when fullscreen mode changes.
  */
 document.addEventListener("fullscreenchange", () => {
@@ -469,22 +281,6 @@ function hideGameCursor() {
     cursor.style.top = "-100px";
 }
 
-/**
- * Open Impressum
- */
-function openImpressum() {
-    document.getElementById('startScreen').classList.add('display_none');
-    document.getElementById('impressum').classList.remove('display_none');
-}
-
-/**
- * Close Impressum
- */
-function closeImpressum() {
-    document.getElementById('impressum').classList.add('display_none');
-    document.getElementById('startScreen').classList.remove('display_none');
-}
-
 window.addEventListener("keydown", (e) => {
     if (e.key == "ArrowLeft") keyboard.LEFT = true;
     if (e.key == "ArrowRight") keyboard.RIGHT = true;
@@ -522,13 +318,6 @@ window.addEventListener("load", checkOrientation);
 window.addEventListener("resize", checkOrientation);
 
 window.addEventListener("orientationchange", checkOrientation);
-
-window.addEventListener("load", () => {
-    soundBtn.textContent = soundMuted ? "🔇" : "🔊";
-    if (!soundMuted && isStartScreenOpen()) {
-        handleStartScreenAudio();
-    }
-});
 
 document.getElementById("canvas").addEventListener("contextmenu", (e) => {
     e.preventDefault();
