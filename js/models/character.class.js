@@ -117,6 +117,7 @@ class Character extends MovableObject {
      */
     updateCharacterMovement() {
         if (!this.canMoveCharacter()) return;
+
         this.handleHorizontalMovement();
         this.handleJumpInput();
         this.resetJumpState();
@@ -144,6 +145,7 @@ class Character extends MovableObject {
             this.otherDirection = false;
             this.updateLastAction();
         }
+
         if (this.world.keyboard.LEFT && this.canMoveLeft()) {
             this.moveLeft();
             this.otherDirection = true;
@@ -156,7 +158,13 @@ class Character extends MovableObject {
      * @returns {boolean} True if movement to the right is possible.
      */
     canMoveRight() {
-        return this.x < this.world.level.level_end_x;
+        const levelEnd = this.world.levelEnd;
+
+        if (!levelEnd) {
+            return this.x < this.world.level.level_end_x;
+        }
+
+        return this.x + this.width < levelEnd.x + 100;
     }
 
     /**
@@ -245,8 +253,9 @@ class Character extends MovableObject {
     }
 
     /**
-     * Updates the camera position according to the character position.
-     */
+    * Updates the camera position while keeping the character
+    * inside a horizontal dead zone.
+    */
     updateCameraPosition() {
         this.world.camera_x = -this.x + 100;
     }

@@ -41,11 +41,9 @@ function drawGameObjects(world) {
     addObjectsToMap(world, world.collectibles);
     addObjectsToMap(world, world.throwableObjects);
     addToMap(world, world.character);
-
     if (world.levelEnd) {
         addToMap(world, world.levelEnd);
     }
-
     world.ctx.translate(-world.camera_x, 0);
 }
 

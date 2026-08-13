@@ -9,6 +9,7 @@ class Level {
     collectibles;
     level_end_x = 2200;
     level_start_x = 100;
+    levelStart = 100;
     requiredCoins = 5;
 
     /**

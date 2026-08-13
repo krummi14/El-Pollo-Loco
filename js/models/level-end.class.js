@@ -16,10 +16,12 @@ class LevelEnd extends MovableObject {
      */
     constructor() {
         super();
-        this.loadImage('img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png');
+        this.loadImage(
+            'img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png'
+        );
         this.loadImages(this.IMAGES_OPENING);
         this.loadImages(this.IMAGES_OPEN);
-        this.x = 2100;
+        this.x = 1950;
         this.y = -40;
         this.width = 400;
         this.height = 550;
