@@ -31,9 +31,9 @@ class Chicken extends MovableObject {
             bottleChance: 0.2
         };
         this.offset = {
-            top: 20,
-            left: 20,
-            right: 20,
+            top: 10,
+            left: 5,
+            right: 5,
             bottom: 10
         };
         this.sound = this.chicken_sound;

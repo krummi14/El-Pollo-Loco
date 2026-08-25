@@ -21,12 +21,27 @@ function initMobileControls(keyboard) {
     const btnRight = document.getElementById("btnRight");
     const btnJump = document.getElementById("btnJump");
     const btnThrow = document.getElementById("btnThrow");
-    btnLeft.addEventListener("touchstart", () => keyboard.LEFT = true);
-    btnLeft.addEventListener("touchend", () => keyboard.LEFT = false);
-    btnRight.addEventListener("touchstart", () => keyboard.RIGHT = true);
-    btnRight.addEventListener("touchend", () => keyboard.RIGHT = false);
-    btnJump.addEventListener("touchstart", () => keyboard.SPACE = true);
-    btnJump.addEventListener("touchend", () => keyboard.SPACE = false);
-    btnThrow.addEventListener("touchstart", () => keyboard.D = true);
-    btnThrow.addEventListener("touchend", () => keyboard.D = false);
+
+    function bindButton(button, key) {
+        button.addEventListener("pointerdown", (e) => {
+            e.preventDefault();
+            button.setPointerCapture(e.pointerId);
+            keyboard[key] = true;
+        });
+
+        button.addEventListener("pointerup", (e) => {
+            e.preventDefault();
+            keyboard[key] = false;
+            button.releasePointerCapture(e.pointerId);
+        });
+
+        button.addEventListener("pointercancel", () => {
+            keyboard[key] = false;
+        });
+    }
+
+    bindButton(btnLeft, "LEFT");
+    bindButton(btnRight, "RIGHT");
+    bindButton(btnJump, "SPACE");
+    bindButton(btnThrow, "D");
 }

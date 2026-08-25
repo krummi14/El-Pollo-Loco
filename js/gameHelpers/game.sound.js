@@ -51,10 +51,10 @@ function unmuteAll() {
 function handleStoryAudio() {
     if (soundMuted) return;
     gameStory_sound.currentTime = 0;
-    gameStory_sound.play().catch(() => { });
+    playSound(gameStory_sound, 'gameStory');
     startScreen_sound.volume = 0.3;
     if (startScreen_sound.paused) {
-        startScreen_sound.play().catch(() => { });
+        playSound(startScreen_sound, 'startScreen');
     }
 }
 
@@ -64,7 +64,7 @@ function handleStoryAudio() {
 function handleStartScreenAudio() {
     if (soundMuted) return;
     startScreen_sound.volume = 1;
-    startScreen_sound.play().catch(() => { });
+    playSound(startScreen_sound, 'startScreen');
 }
 
 /**

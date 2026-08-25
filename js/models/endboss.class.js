@@ -2,6 +2,12 @@ class Endboss extends MovableObject {
     height = 400;
     width = 250;
     y = 50;
+    offset = {
+        top: 70,
+        left: 35,
+        right: 35,
+        bottom: 35
+    };
     isCharging = false;
     lastChargeAttack = 0;
     chargeDistance = 0;
@@ -372,13 +378,21 @@ class Endboss extends MovableObject {
         if (!this.world.soundEnabled) return;
         if (!this.world.userHasInteracted) return;
         if (this.endboss_sound.paused) {
-            this.endboss_sound.play().catch(() => { });
+            playSound(this.endboss_sound, 'endboss');
         }
     }
 
     /**
- * Starts the endboss movement and animation intervals.
- */
+    * Stops the endboss sound immediately.
+    */
+    mute() {
+        this.endboss_sound.pause();
+        this.endboss_sound.currentTime = 0;
+    }
+
+    /**
+     * Starts the endboss movement and animation intervals.
+    */
     animateEndboss() {
         this.startEndbossMovementInterval();
         this.startEndbossAnimationInterval();

@@ -78,12 +78,10 @@ class MovableObject extends DrawableObject {
 
     hit(damage = 20) {
         this.energy -= damage;
-
         if (this.energy <= 0) {
             this.energy = 0;
             this.collidable = false;
         }
-
         this.lastHit = Date.now();
         this.lastAction = Date.now();
     }
@@ -251,5 +249,27 @@ class MovableObject extends DrawableObject {
             this.speed = 0.5;
             this.isCharging = false;
         }, 1000);
+    }
+
+    drawCollisionBox(ctx) {
+        const offset = this.offset || {
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0
+        };
+
+        ctx.save();
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 2;
+
+        ctx.strokeRect(
+            this.x + offset.left,
+            this.y + offset.top,
+            this.width - offset.left - offset.right,
+            this.height - offset.top - offset.bottom
+        );
+
+        ctx.restore();
     }
 }

@@ -73,16 +73,22 @@ function addObjectsToMap(world, objects) {
 }
 
 /**
- * Draws a single object and handles its direction.
+ * Draws a single object and handles its direction and collision box.
  * @param {World} world - Current game world.
  * @param {MovableObject} object - Object to draw.
  */
 function addToMap(world, object) {
     if (!object || typeof object.draw !== 'function') return;
-
-    if (object.otherDirection) flipImage(world, object);
+    if (object.otherDirection) {
+        flipImage(world, object);
+    }
     object.draw(world.ctx);
-    if (object.otherDirection) flipImageBack(world);
+    if (object.drawCollisionBox) {
+        object.drawCollisionBox(world.ctx);
+    }
+    if (object.otherDirection) {
+        flipImageBack(world);
+    }
 }
 
 /**

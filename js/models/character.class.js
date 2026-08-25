@@ -89,8 +89,8 @@ class Character extends MovableObject {
         };
         this.offset = {
             top: 80,
-            left: 40,
-            right: 40,
+            left: 20,
+            right: 20,
             bottom: 20
         };
         this.applyGravity();
@@ -271,12 +271,12 @@ class Character extends MovableObject {
      * Updates the character animation according to its current state.
      */
     updateCharacterAnimation() {
-        if (!this.canAnimateCharacter()) return;
-        if (this.isDead()) return this.playDeathAnimation();
+        if (!this.world) return;
+        if (this.isDead()) { this.playDeathAnimation(); return; }
+        if (this.world.gameState !== 'running') return;
         if (this.isAboveGround()) return this.playJumpAnimation();
         if (this.isHurt()) return this.playHurtAnimation();
         if (this.isWaiting()) return this.playWaitingAnimation();
-        if (this.isSleeping()) return this.playSleepingAnimation();
         this.playWalkingAnimation();
     }
 
@@ -350,6 +350,7 @@ class Character extends MovableObject {
      * @param {number} enemyX - X position of the enemy causing the knockback.
      */
     applyKnockback(force, enemyX) {
+        if (this.world?.gameState != 'running') return;
         let direction = enemyX < this.x ? 1 : -1;
         this.x += direction * force;
     }
@@ -361,6 +362,7 @@ class Character extends MovableObject {
     */
     applyStun(duration) {
         if (duration <= 0) return;
+        if (this.world?.gameState !== 'running') return;
         this.isStunned = true;
         setTimeout(() => {
             this.isStunned = false;

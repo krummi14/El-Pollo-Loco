@@ -113,3 +113,13 @@ function closeImpressum() {
     document.getElementById('impressum').classList.add('display_none');
     document.getElementById('startScreen').classList.remove('display_none');
 }
+
+document.getElementById("canvas").addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+});
+
+document.querySelectorAll(".ctrl_btn").forEach((button) => {
+    button.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+    });
+});

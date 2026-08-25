@@ -50,10 +50,9 @@ class World {
      */
     setWorld() {
         this.character.world = this;
-        this.endboss = this.level.enemies.find(
-            enemy => enemy instanceof Endboss
-        ) || null;
+        this.endboss = this.level.enemies.find(enemy => enemy instanceof Endboss) || null;
         this.level.enemies.forEach(enemy => enemy.world = this);
+        this.collectibles.forEach(item => item.world = this);
     }
 
     /**
@@ -67,6 +66,7 @@ class World {
      * Updates all game systems during the main game loop.
      */
     updateWorld() {
+        if (this.gameState != 'running') return;
         this.checkCollisions();
         this.checkGameProgress();
         this.checkThrowObjects();
@@ -101,7 +101,8 @@ class World {
      * @returns {boolean} True if a bottle can be thrown.
      */
     canThrowBottle() {
-        return this.keyboard.D
+        return this.gameState == 'running'
+            && this.keyboard.D
             && this.character.bottles > 0
             && !this.throwCooldown;
     }

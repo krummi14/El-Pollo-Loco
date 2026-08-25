@@ -5,6 +5,7 @@
 function collectItems(world) {
     world.collectibles.forEach((item, index) => {
         if (!world.character.isColliding(item)) return;
+        item.playCollectSound();
         collectItem(world, item);
         world.collectibles.splice(index, 1);
     });

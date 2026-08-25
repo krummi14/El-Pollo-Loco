@@ -57,10 +57,10 @@ function onlyEndbossRemains(world) {
 function dropCoins(world, enemy) {
     for (let i = 0; i < enemy.loot.coins; i++) {
         if (Math.random() >= enemy.loot.coinChance) continue;
-
         const coin = new Collectible('coin');
         coin.x = enemy.x + i * 15;
         coin.y = enemy.y;
+        coin.world = world;
         world.collectibles.push(coin);
     }
 }
@@ -73,10 +73,10 @@ function dropCoins(world, enemy) {
 function dropBottles(world, enemy) {
     for (let i = 0; i < enemy.loot.bottles; i++) {
         if (Math.random() >= enemy.loot.bottleChance) continue;
-
         const bottle = new Collectible('bottleOne');
         bottle.x = enemy.x + i * 15;
         bottle.y = enemy.y;
+        bottle.world = world;
         world.collectibles.push(bottle);
     }
 }

@@ -28,6 +28,25 @@ class DrawableObject {
         );
     }
 
+    drawCollisionBox(ctx) {
+        const offset = this.offset || {
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0
+        };
+
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 2;
+
+        ctx.strokeRect(
+            this.x + offset.left,
+            this.y + offset.top,
+            this.width - offset.left - offset.right,
+            this.height - offset.top - offset.bottom
+        );
+    }
+
     /**
       * Loads multiple images and stores them in the image cache
       * for later use by the object.

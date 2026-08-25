@@ -4,7 +4,7 @@
  */
 function checkEndbossWin(world) {
     if (
-        world.gameState === 'running' &&
+        world.gameState == 'running' &&
         world.endboss &&
         world.endboss.energy <= 0
     ) {
@@ -20,7 +20,7 @@ function checkEndbossWin(world) {
  */
 function checkCharacterLost(world) {
     if (
-        world.gameState === 'running' &&
+        world.gameState == 'running' &&
         world.character.energy <= 0 &&
         world.endboss &&
         world.endboss.energy > 0 &&

@@ -1,6 +1,6 @@
 let canvas;
 let world;
-let currentLevel = 1;
+let currentLevel = 3;
 let keyboard = new Keyboard();
 let startScreen = document.getElementById('startScreen');
 let fullScreen = document.getElementById('fullscreen');
@@ -45,7 +45,7 @@ function isMobile() {
  * Starts the game and prepares the game interface and audio.
  */
 function startGame() {
-    currentLevel = 1;
+    currentLevel = 3;
     checkMobile();
     hideGameCursor();
     startScreen.classList.add('fade_out');
@@ -105,6 +105,20 @@ function changeLevelhelper(level) {
     world = new World(canvas, keyboard, level);
     world.soundEnabled = !soundMuted && world.userHasInteracted;
     world.character.hasStarted = true;
+}
+
+/**
+ * Plays an audio element and handles playback errors.
+ *
+ * @param {HTMLAudioElement} audio - Audio element to play.
+ * @param {string} name - Name of the sound for error reporting.
+ */
+function playSound(audio, name) {
+    if (soundMuted) return;
+    audio.play().catch(error => {
+        if (error.name == 'AbortError') return;
+        console.error(`Sound "${name}" konnte nicht abgespielt werden:`, error);
+    });
 }
 
 /**
@@ -268,9 +282,7 @@ function showGameOverScreen() {
     winLostScreen.classList.remove('display_none');
     winImg.classList.add('display_none');
     gameOverImg.classList.remove('display_none');
-    if (!soundMuted) {
-        gameOver_sound.play().catch(() => { });
-    }
+    playSound(gameOver_sound, 'gameOver');
 }
 
 /**
@@ -318,7 +330,3 @@ window.addEventListener("load", checkOrientation);
 window.addEventListener("resize", checkOrientation);
 
 window.addEventListener("orientationchange", checkOrientation);
-
-document.getElementById("canvas").addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-});
